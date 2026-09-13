@@ -1,11 +1,13 @@
 import { Camera, ImagePlus, Trash2 } from 'lucide-react'
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
-import { useDeleteProfilePhoto, useUploadProfilePhoto } from '../features/users/api'
-import { getErrorMessage } from '../lib/utils'
-import type { UserDetails } from '../types'
-import { ProfileAvatar } from './ProfileAvatar'
-import { Button } from './ui/button'
-import { Dialog } from './ui/dialog'
+import { useDeleteProfilePhoto, useUploadProfilePhoto } from '@/features/users/api'
+import { getErrorMessage } from '@/lib/utils'
+import type { UserDetails } from '@/types'
+import { ProfileAvatar } from '@/components/ProfileAvatar'
+import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
+import { Alert } from '@/components/ui/feedback'
+import styles from './styles.module.css'
 
 const MAX_PHOTO_SIZE = 2 * 1024 * 1024
 const ACCEPTED_TYPES = new Set(['image/png', 'image/jpeg'])
@@ -101,9 +103,9 @@ export function ProfilePhotoDialog({ user, onUpdated }: ProfilePhotoDialogProps)
           </>
         )}
       >
-        <form id="profile-photo" className="photo-form" onSubmit={submit}>
-          {error ? <div className="alert alert--error" role="alert">{error}</div> : null}
-          <div className="photo-preview">
+        <form id="profile-photo" className={styles.form} onSubmit={submit}>
+          {error ? <Alert>{error}</Alert> : null}
+          <div className={styles.preview}>
             {previewUrl ? <img src={previewUrl} alt="Pré-visualização da nova foto" /> : (
               <ProfileAvatar
                 user={{ ...user, profilePhotoVersion: removeCurrent ? undefined : user.profilePhotoVersion }}
@@ -112,16 +114,16 @@ export function ProfilePhotoDialog({ user, onUpdated }: ProfilePhotoDialogProps)
             )}
             <div><strong>{file ? file.name : user.name}</strong><span>{file ? 'Nova foto selecionada' : removeCurrent ? 'Foto atual será removida' : 'Foto atual'}</span></div>
           </div>
-          <label className="file-picker">
-            <span className="field__label">Escolher foto</span>
-            <span className="file-picker__control">
-              <span className="file-picker__button">Selecionar foto</span>
-              <span className="file-picker__name" aria-live="polite">
+          <label className={styles.filePicker}>
+            <span className={styles.label}>Escolher foto</span>
+            <span className={styles.fileControl}>
+              <span className={styles.fileButton}>Selecionar foto</span>
+              <span className={styles.fileName} aria-live="polite">
                 {file?.name ?? 'Nenhum arquivo selecionado'}
               </span>
             </span>
             <input
-              className="file-picker__input"
+              className={styles.fileInput}
               name="profilePhoto"
               type="file"
               accept="image/png,image/jpeg"
@@ -129,11 +131,11 @@ export function ProfilePhotoDialog({ user, onUpdated }: ProfilePhotoDialogProps)
             />
           </label>
           {user.profilePhotoVersion !== undefined && !file ? (
-            <Button className="photo-remove" variant="danger" size="small" onClick={() => setRemoveCurrent(!removeCurrent)}>
+            <Button className={styles.remove} variant="danger" size="small" onClick={() => setRemoveCurrent(!removeCurrent)}>
               <Trash2 size={16} />{removeCurrent ? 'Manter foto atual' : 'Remover foto atual'}
             </Button>
           ) : (
-            <p className="photo-form__hint"><ImagePlus size={16} />A imagem será recortada visualmente para caber no avatar.</p>
+            <p className={styles.hint}><ImagePlus size={16} />A imagem será recortada visualmente para caber no avatar.</p>
           )}
         </form>
       </Dialog>

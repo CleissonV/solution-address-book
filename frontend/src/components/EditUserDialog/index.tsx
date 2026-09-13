@@ -1,12 +1,14 @@
 import { Pencil } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
-import { useUpdateUser } from '../features/users/api'
-import { isValidCpf } from '../lib/cpf'
-import { formatCpf, getErrorMessage } from '../lib/utils'
-import type { Role, UserDetails } from '../types'
-import { Button } from './ui/button'
-import { Dialog } from './ui/dialog'
-import { Input } from './ui/input'
+import { useUpdateUser } from '@/features/users/api'
+import { isValidCpf } from '@/lib/cpf'
+import { formatCpf, getErrorMessage } from '@/lib/utils'
+import type { Role, UserDetails } from '@/types'
+import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
+import { Alert } from '@/components/ui/feedback'
+import formStyles from '@/components/ui/form.module.css'
+import { Input, SelectField } from '@/components/ui/input'
 
 interface EditUserDialogProps {
   user: UserDetails
@@ -69,23 +71,20 @@ export function EditUserDialog({ user, canEditRole, onUpdated }: EditUserDialogP
           </>
         )}
       >
-        <form id="edit-user" className="form-grid" onSubmit={submit}>
-          {error ? <div className="alert alert--error form-grid__full" role="alert">{error}</div> : null}
-          <Input className="form-grid__full" label="Nome completo" name="name" value={form.name}
+        <form id="edit-user" className={formStyles.grid} onSubmit={submit}>
+          {error ? <Alert className={formStyles.full}>{error}</Alert> : null}
+          <Input fieldClassName={formStyles.full} label="Nome completo" name="name" value={form.name}
             onChange={(event) => setForm({ ...form, name: event.target.value })} maxLength={160} required />
           <Input label="CPF" name="cpf" inputMode="numeric" value={form.cpf}
             onChange={(event) => setForm({ ...form, cpf: formatCpf(event.target.value) })} required />
           <Input label="Data de nascimento" name="birthDate" type="date" value={form.birthDate}
             onChange={(event) => setForm({ ...form, birthDate: event.target.value })} required />
           {canEditRole ? (
-            <label className="field">
-              <span className="field__label">Perfil</span>
-              <select className="input" value={form.role}
+            <SelectField label="Perfil" value={form.role}
                 onChange={(event) => setForm({ ...form, role: event.target.value as Role })}>
                 <option value="USER">Usuário comum</option>
                 <option value="ADMIN">Administrador</option>
-              </select>
-            </label>
+            </SelectField>
           ) : null}
         </form>
       </Dialog>

@@ -1,0 +1,16 @@
+.form { display: flex; flex-direction: column; gap: 18px; }
+.preview { align-items: center; background: var(--soft); border: 1px solid var(--line); border-radius: 14px; display: flex; gap: 16px; padding: 18px; }
+.preview > img { border-radius: 18px; height: 78px; object-fit: cover; width: 78px; }
+.preview > div { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.preview strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview span, .hint { color: var(--muted); font-size: 12px; }
+.filePicker { display: flex; flex-direction: column; gap: 7px; position: relative; }
+.label { color: #404040; font-size: 13px; font-weight: 700; }
+.fileControl { align-items: center; background: white; border: 1px solid #d4d4d4; border-radius: 10px; display: flex; gap: 12px; min-height: 58px; padding: 9px 12px; transition: border-color 0.16s, box-shadow 0.16s; }
+.filePicker:hover .fileControl { border-color: var(--brand); }
+.filePicker:focus-within .fileControl { border-color: var(--brand); box-shadow: 0 0 0 3px rgb(244 67 54 / 12%); }
+.fileButton { background: #fff0ef; border-radius: 7px; color: var(--brand-dark); flex: 0 0 auto; font-weight: 800; padding: 9px 11px; }
+.fileName { color: #404040; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fileInput { height: 1px; opacity: 0; overflow: hidden; position: absolute; width: 1px; }
+.remove { align-self: flex-start; }
+.hint { align-items: center; display: flex; gap: 7px; margin: 0; }

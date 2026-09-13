@@ -82,13 +82,13 @@ test('executa jornada de usuário e endereço com autorização por perfil', asy
   const newAddressDialog = page.getByRole('dialog', { name: 'Novo endereço' })
   await newAddressDialog.getByLabel('CEP').fill('20040020')
   await newAddressDialog.getByLabel('CEP').press('Tab')
-  await expect(newAddressDialog.locator('.postal-preview')).toContainText('Rio de Janeiro')
+  await expect(newAddressDialog.getByTestId('postal-preview')).toContainText('Rio de Janeiro')
   await newAddressDialog.getByLabel('Número').fill(addressNumber)
   await newAddressDialog.getByLabel('Complemento').fill('Sala E2E')
   await newAddressDialog.getByRole('button', { name: 'Salvar endereço' }).click()
   await expect(newAddressDialog).toBeHidden()
 
-  let addressCard = page.locator('article.address-card').filter({ hasText: addressNumber })
+  let addressCard = page.getByTestId('address-card').filter({ hasText: addressNumber })
   await expect(addressCard).toContainText('Sala E2E')
   await addressCard.getByRole('button', { name: 'Ações do endereço' }).click()
   await page.getByRole('button', { name: 'Editar', exact: true }).click()
@@ -140,7 +140,7 @@ test('executa jornada de usuário e endereço com autorização por perfil', asy
 
   await page.goto('/users')
   await expect(page).toHaveURL(userUrl)
-  addressCard = page.locator('article.address-card').filter({ hasText: addressNumber })
+  addressCard = page.getByTestId('address-card').filter({ hasText: addressNumber })
   await addressCard.getByRole('button', { name: 'Ações do endereço' }).click()
   await page.getByRole('button', { name: 'Excluir', exact: true }).click()
 

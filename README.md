@@ -164,6 +164,7 @@ Conteúdo binário fica em tabela separada. Usuário mantém somente metadado de
 - React 19, TypeScript 5.8 e Vite 7
 - TanStack React Query e Axios
 - shadcn/ui no estilo `new-york`, Radix UI e CVA
+- CSS Modules co-localizados por página/componente; CSS global restrito a tokens, tema e reset
 - Tailwind CSS 4, Lucide Icons e tokens da marca Solution
 - Vitest e Playwright
 
@@ -181,7 +182,9 @@ Conteúdo binário fica em tabela separada. Usuário mantém somente metadado de
 │   ├── e2e/
 │   └── src/
 │       ├── auth
-│       ├── components
+│       ├── components/<Componente>/
+│       │   ├── index.tsx
+│       │   └── styles.module.css
 │       ├── features
 │       └── pages
 ├── docs/

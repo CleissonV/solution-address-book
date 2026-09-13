@@ -3,6 +3,7 @@ import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, type HTMLAt
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { VariantProps } from 'class-variance-authority'
+import styles from './dialog.module.css'
 
 export const AlertDialog = AlertDialogPrimitive.Root
 export const AlertDialogTrigger = AlertDialogPrimitive.Trigger
@@ -12,10 +13,10 @@ export const AlertDialogContent = forwardRef<
   ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Portal>
-    <AlertDialogPrimitive.Overlay className="dialog__overlay" />
+    <AlertDialogPrimitive.Overlay className={styles.overlay} />
     <AlertDialogPrimitive.Content
       ref={ref}
-      className={cn('dialog__content alert-dialog__content', className)}
+      className={cn(styles.content, styles.alertContent, className)}
       {...props}
     />
   </AlertDialogPrimitive.Portal>
@@ -23,18 +24,18 @@ export const AlertDialogContent = forwardRef<
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
 
 export function AlertDialogHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('dialog__header', className)} {...props} />
+  return <div className={cn(styles.header, className)} {...props} />
 }
 
 export function AlertDialogFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('dialog__footer', className)} {...props} />
+  return <div className={cn(styles.footer, className)} {...props} />
 }
 
 export const AlertDialogTitle = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Title>,
   ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Title ref={ref} className={cn('dialog__title', className)} {...props} />
+  <AlertDialogPrimitive.Title ref={ref} className={cn(styles.title, className)} {...props} />
 ))
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
 
@@ -42,7 +43,7 @@ export const AlertDialogDescription = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Description>,
   ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Description ref={ref} className={cn('dialog__description', className)} {...props} />
+  <AlertDialogPrimitive.Description ref={ref} className={cn(styles.description, className)} {...props} />
 ))
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName
 

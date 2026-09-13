@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useProfilePhoto } from '../features/users/api'
-import { cn } from '../lib/utils'
-import type { UserSummary } from '../types'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { useProfilePhoto } from '@/features/users/api'
+import { cn } from '@/lib/utils'
+import type { UserSummary } from '@/types'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import styles from './styles.module.css'
 
 interface ProfileAvatarProps {
   user: Pick<UserSummary, 'id' | 'name' | 'profilePhotoVersion'>
@@ -29,7 +30,7 @@ export function ProfileAvatar({ user, size = 'default', className }: ProfileAvat
   }, [photo])
 
   return (
-    <Avatar className={cn(size === 'large' && 'avatar--large', size === 'xl' && 'avatar--xl', className)}>
+    <Avatar className={cn(size === 'large' && styles.large, size === 'xl' && styles.xl, className)}>
       {source ? <AvatarImage src={source} alt={`Foto de ${user.name}`} /> : null}
       <AvatarFallback aria-label={`Avatar de ${user.name}`}>{initials(user.name)}</AvatarFallback>
     </Avatar>

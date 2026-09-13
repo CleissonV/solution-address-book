@@ -1,0 +1,11 @@
+.zipField { position: relative; }
+.zipStatus { bottom: 13px; color: var(--success); position: absolute; right: 12px; }
+.postalPreview { align-items: flex-start; background: #f7f7f6; border: 1px solid #e5e5e5; border-radius: 11px; display: flex; gap: 12px; padding: 14px; }
+.postalPreview svg { color: var(--brand); flex: 0 0 auto; }
+.postalPreview div { display: flex; flex-direction: column; gap: 5px; }
+.postalPreview span { color: var(--muted); font-size: 12px; }
+.checkField { align-items: flex-start; background: #fff8f7; border: 1px solid #ffe0dd; border-radius: 11px; cursor: pointer; display: flex; gap: 11px; padding: 14px; }
+.checkField input { accent-color: var(--brand); height: 17px; margin-top: 2px; width: 17px; }
+.checkField span { display: flex; flex-direction: column; gap: 4px; }
+.checkField strong { font-size: 13px; }
+.checkField small { color: var(--muted); }

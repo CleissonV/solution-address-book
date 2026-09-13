@@ -1,19 +1,20 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import styles from './button.module.css'
 
-export const buttonVariants = cva('button', {
+export const buttonVariants = cva(styles.button, {
   variants: {
     variant: {
-      primary: 'button--primary',
-      secondary: 'button--secondary',
-      ghost: 'button--ghost',
-      danger: 'button--danger',
+      primary: styles.primary,
+      secondary: styles.secondary,
+      ghost: styles.ghost,
+      danger: styles.danger,
     },
     size: {
-      default: 'button--default',
-      small: 'button--small',
-      icon: 'button--icon',
+      default: styles.default,
+      small: styles.small,
+      icon: styles.icon,
     },
   },
   defaultVariants: { variant: 'primary', size: 'default' },

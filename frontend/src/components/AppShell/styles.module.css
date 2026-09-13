@@ -1,0 +1,32 @@
+.shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+.sidebar { background: var(--ink); color: white; display: flex; flex-direction: column; height: 100vh; min-height: 100vh; padding: 32px 20px 22px; position: sticky; top: 0; }
+.logo { filter: brightness(0) invert(1); height: auto; margin: 4px 10px 54px; width: 128px; }
+.nav { display: flex; flex-direction: column; gap: 6px; }
+.navItem { align-items: center; border-radius: 10px; color: #a9a9a9; display: flex; font-size: 14px; font-weight: 700; gap: 12px; padding: 12px 14px; text-decoration: none; transition: 0.16s; }
+.navItem:hover { background: #1c1c1c; color: white; }
+.active { background: #242424; color: white; }
+.active svg { color: var(--brand); }
+.account { align-items: center; border-top: 1px solid #2f2f2f; display: grid; gap: 10px; grid-template-columns: 38px 1fr 40px; margin-top: auto; padding-top: 20px; }
+.identity { display: flex; flex-direction: column; min-width: 0; }
+.identity strong { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.identity span { color: #888; font-size: 11px; margin-top: 3px; }
+.main { min-width: 0; }
+
+@media (max-width: 980px) {
+  .shell { grid-template-columns: 84px 1fr; }
+  .sidebar { padding: 26px 14px 20px; }
+  .logo { margin: 5px auto 50px; object-fit: cover; object-position: left; width: 43px; }
+  .navItem { font-size: 0; justify-content: center; padding: 13px; }
+  .identity { display: none; }
+  .account { grid-template-columns: 1fr; justify-items: center; }
+  .account > :first-child { display: none; }
+}
+
+@media (max-width: 680px) {
+  .shell { display: block; padding-bottom: 76px; }
+  .sidebar { align-items: center; bottom: 0; flex-direction: row; height: 68px; justify-content: space-around; min-height: 0; padding: 10px 16px; position: fixed; top: auto; width: 100%; z-index: 30; }
+  .logo, .identity, .account > :first-child { display: none; }
+  .nav { flex-direction: row; }
+  .navItem { padding: 12px 20px; }
+  .account { border: 0; display: block; margin: 0; padding: 0; }
+}

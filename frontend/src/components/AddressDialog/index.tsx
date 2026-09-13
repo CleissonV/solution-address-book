@@ -1,11 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { CheckCircle2, LoaderCircle, MapPin, Plus } from 'lucide-react'
-import { lookupPostalCode, useCreateAddress, useUpdateAddress } from '../features/users/api'
-import { formatZipCode, getErrorMessage } from '../lib/utils'
-import type { Address, PostalCode } from '../types'
-import { Button } from './ui/button'
-import { Dialog } from './ui/dialog'
-import { Input } from './ui/input'
+import { CheckCircle2, MapPin, Plus } from 'lucide-react'
+import { lookupPostalCode, useCreateAddress, useUpdateAddress } from '@/features/users/api'
+import { formatZipCode, getErrorMessage } from '@/lib/utils'
+import type { Address, PostalCode } from '@/types'
+import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
+import { Alert, Spinner } from '@/components/ui/feedback'
+import { Input } from '@/components/ui/input'
+import formStyles from '@/components/ui/form.module.css'
+import styles from './styles.module.css'
 
 interface AddressDialogProps {
   userId: string
@@ -75,17 +78,17 @@ export function AddressDialog({ userId, address, open: controlledOpen, onOpenCha
       <Dialog open={open} onOpenChange={setOpen} title={address ? 'Editar endereço' : 'Novo endereço'}
         description="Informe o CEP para preencher automaticamente os dados."
         footer={<><Button variant="secondary" onClick={() => setOpen(false)}>Cancelar</Button><Button type="submit" form="address-form" disabled={mutation.isPending || lookupLoading}>{mutation.isPending ? 'Salvando...' : 'Salvar endereço'}</Button></>}>
-        <form id="address-form" className="form-grid" onSubmit={submit}>
-          {error && <div className="alert alert--error form-grid__full" role="alert">{error}</div>}
-          <div className="zip-field">
+        <form id="address-form" className={formStyles.grid} onSubmit={submit}>
+          {error && <Alert className={formStyles.full}>{error}</Alert>}
+          <div className={styles.zipField}>
             <Input label="CEP" name="zipCode" inputMode="numeric" placeholder="00000-000" value={form.zipCode}
               onChange={(e) => { setForm({ ...form, zipCode: formatZipCode(e.target.value) }); setPostalCode(null) }} onBlur={searchZipCode} required />
-            <span className="zip-field__status">{lookupLoading ? <LoaderCircle className="spin" size={18} /> : postalCode ? <CheckCircle2 size={18} /> : null}</span>
+            <span className={styles.zipStatus}>{lookupLoading ? <Spinner /> : postalCode ? <CheckCircle2 size={18} /> : null}</span>
           </div>
           <Input label="Número" name="number" placeholder="Ex.: 300" maxLength={20} value={form.number} onChange={(e) => setForm({ ...form, number: e.target.value })} required />
-          <Input className="form-grid__full" label="Complemento" name="complement" placeholder="Sala, bloco ou referência (opcional)" maxLength={120} value={form.complement} onChange={(e) => setForm({ ...form, complement: e.target.value })} />
-          {postalCode && <div className="postal-preview form-grid__full"><MapPin size={20} /><div><strong>{postalCode.street}</strong><span>{postalCode.neighborhood} · {postalCode.city}/{postalCode.state}</span></div></div>}
-          <label className="check-field form-grid__full"><input type="checkbox" checked={form.primary} onChange={(e) => setForm({ ...form, primary: e.target.checked })} /><span><strong>Endereço principal</strong><small>Usado como referência padrão para este usuário.</small></span></label>
+          <Input fieldClassName={formStyles.full} label="Complemento" name="complement" placeholder="Sala, bloco ou referência (opcional)" maxLength={120} value={form.complement} onChange={(e) => setForm({ ...form, complement: e.target.value })} />
+          {postalCode && <div className={`${styles.postalPreview} ${formStyles.full}`} data-testid="postal-preview"><MapPin size={20} /><div><strong>{postalCode.street}</strong><span>{postalCode.neighborhood} · {postalCode.city}/{postalCode.state}</span></div></div>}
+          <label className={`${styles.checkField} ${formStyles.full}`}><input type="checkbox" checked={form.primary} onChange={(e) => setForm({ ...form, primary: e.target.checked })} /><span><strong>Endereço principal</strong><small>Usado como referência padrão para este usuário.</small></span></label>
         </form>
       </Dialog>
     </>

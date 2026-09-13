@@ -1,6 +1,7 @@
 import type { PropsWithChildren, ReactNode } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
+import styles from './dialog.module.css'
 
 interface DialogProps extends PropsWithChildren {
   open: boolean
@@ -14,20 +15,19 @@ export function Dialog({ open, onOpenChange, title, description, footer, childre
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="dialog__overlay" />
-        <DialogPrimitive.Content className="dialog__content">
-          <div className="dialog__header">
+        <DialogPrimitive.Overlay className={styles.overlay} />
+        <DialogPrimitive.Content className={styles.content}>
+          <div className={styles.header}>
             <div>
-              <DialogPrimitive.Title className="dialog__title">{title}</DialogPrimitive.Title>
-              {description && <DialogPrimitive.Description className="dialog__description">{description}</DialogPrimitive.Description>}
+              <DialogPrimitive.Title className={styles.title}>{title}</DialogPrimitive.Title>
+              {description && <DialogPrimitive.Description className={styles.description}>{description}</DialogPrimitive.Description>}
             </div>
-            <DialogPrimitive.Close className="dialog__close" aria-label="Fechar"><X size={20} /></DialogPrimitive.Close>
+            <DialogPrimitive.Close className={styles.close} aria-label="Fechar"><X size={20} /></DialogPrimitive.Close>
           </div>
-          <div className="dialog__body">{children}</div>
-          {footer && <div className="dialog__footer">{footer}</div>}
+          <div className={styles.body}>{children}</div>
+          {footer && <div className={styles.footer}>{footer}</div>}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
   )
 }
-

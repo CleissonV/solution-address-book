@@ -1,8 +1,9 @@
 import { RotateCcw, UserX } from 'lucide-react'
 import { useState } from 'react'
-import { useUpdateUserStatus } from '../features/users/api'
-import { getErrorMessage } from '../lib/utils'
-import type { UserDetails } from '../types'
+import { useUpdateUserStatus } from '@/features/users/api'
+import { getErrorMessage } from '@/lib/utils'
+import type { UserDetails } from '@/types'
+import { Alert } from '@/components/ui/feedback'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,8 +14,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from './ui/alert-dialog'
-import { Button } from './ui/button'
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import styles from './styles.module.css'
 
 interface UserStatusActionProps {
   user: UserDetails
@@ -55,7 +57,7 @@ export function UserStatusAction({ user }: UserStatusActionProps) {
             </AlertDialogDescription>
           </div>
         </AlertDialogHeader>
-        {error ? <div className="alert alert--error status-dialog__error" role="alert">{error}</div> : null}
+        {error ? <Alert className={styles.error}>{error}</Alert> : null}
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction

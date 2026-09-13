@@ -1,0 +1,5 @@
+.badge { align-items: center; border-radius: 999px; display: inline-flex; font-size: 12px; font-weight: 800; gap: 4px; line-height: 1; padding: 7px 10px; width: fit-content; }
+.neutral { background: #f0f0ef; color: #525252; }
+.brand { background: #fff0ef; color: #d93429; }
+.success { background: #eaf8f1; color: var(--success); }
+.danger { background: #fff0ef; color: var(--danger); }
