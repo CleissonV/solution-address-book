@@ -56,7 +56,6 @@ export function LoginPage() {
           <Button type="submit" disabled={loading} className={styles.submit}>
             {loading ? <Spinner light /> : <>Entrar <ArrowRight size={18} /></>}
           </Button>
-          <p className={styles.help}>Primeiro acesso administrativo: <code>529.982.247-25</code> / <code>Admin@123</code></p>
         </form>
       </main>
     </div>
