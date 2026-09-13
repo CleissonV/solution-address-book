@@ -2,9 +2,9 @@ spring:
   application:
     name: solution-address-book
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/solution_address_book}
-    username: ${SPRING_DATASOURCE_USERNAME:solution}
-    password: ${SPRING_DATASOURCE_PASSWORD:solution_dev_password}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${PGHOST:localhost}:5432/${PGDATABASE:solution_address_book}}
+    username: ${SPRING_DATASOURCE_USERNAME:${PGUSER:solution}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${PGPASSWORD:solution_dev_password}}
   jpa:
     open-in-view: false
     hibernate:
@@ -27,7 +27,7 @@ spring:
     default-property-inclusion: non_null
 
 server:
-  port: 8080
+  port: ${PORT:8080}
   error:
     include-message: never
 

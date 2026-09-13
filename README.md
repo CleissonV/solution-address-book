@@ -8,15 +8,21 @@ Aplicação full stack para gestão de usuários e múltiplos endereços, desenv
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 [![CI](https://github.com/CleissonV/solution-address-book/actions/workflows/ci.yml/badge.svg)](https://github.com/CleissonV/solution-address-book/actions/workflows/ci.yml)
-[![GitHub Pages](https://github.com/CleissonV/solution-address-book/actions/workflows/pages.yml/badge.svg)](https://cleissonv.github.io/solution-address-book/)
+[![Vercel](https://img.shields.io/badge/Vercel-Full_stack-000000?logo=vercel&logoColor=white)](https://solution-address-book-web.vercel.app/)
 
-**[Abrir interface publicada no GitHub Pages](https://cleissonv.github.io/solution-address-book/)**
+**[Abrir aplicação full stack publicada](https://solution-address-book-web.vercel.app/)**
 
-> GitHub Pages demonstra frontend responsivo. Login público depende da API Spring configurada em `VITE_API_URL`; execução full stack completa está disponível via Docker.
+> Deploy público executa frontend Vite e backend Spring Boot no mesmo domínio com Vercel Services. Dados persistem em PostgreSQL gerenciado pela Neon.
 
 ## Para o avaliador
 
-Suba toda a solução com um comando:
+Teste imediatamente a versão pública:
+
+- URL: [https://solution-address-book-web.vercel.app/](https://solution-address-book-web.vercel.app/)
+- CPF: `529.982.247-25`
+- Senha: `Admin@123`
+
+Ou suba toda a solução local com um comando:
 
 ```bash
 docker compose up --build
@@ -29,7 +35,7 @@ Acesse [http://localhost:3000](http://localhost:3000) e use:
 
 Docker Compose cria PostgreSQL, executa migrações Flyway, compila backend e frontend, roda testes do backend durante o build e aguarda healthchecks antes de liberar a interface.
 
-> Credenciais e segredos presentes no Compose existem somente para avaliação local. Em produção, use variáveis documentadas em [.env.example](.env.example).
+> A conta acima contém dados demonstrativos e existe para avaliação técnica. Segredos de infraestrutura permanecem protegidos nas variáveis da Vercel.
 
 ## Entrega em resumo
 
@@ -40,10 +46,10 @@ Docker Compose cria PostgreSQL, executa migrações Flyway, compila backend e fr
 | Usuários | Cadastro, consulta, edição, nível de acesso, foto e desativação reversível |
 | Endereços | CRUD completo, endereço principal e promoção automática |
 | CEP | Consulta ViaCEP validada também no backend, com timeout e cache Caffeine |
-| Dados | PostgreSQL 17, Flyway, UUID, constraints e índice único parcial |
+| Dados | PostgreSQL 17 local, Neon Postgres em produção, Flyway, UUID, constraints e índice único parcial |
 | Interface | React 19, TypeScript, React Query, shadcn/ui, Radix, CVA e layout responsivo |
 | Qualidade | 23 testes backend, 6 frontend e 2 jornadas E2E com Playwright |
-| Operação | Imagens Docker multi-stage, usuário não-root, healthchecks e CI |
+| Operação | Docker multi-stage, usuário não-root, healthchecks, CI e deploy full stack na Vercel |
 
 ## Requisitos e regras de negócio
 
@@ -88,6 +94,19 @@ Documentação complementar:
 
 - [Arquitetura e system design](docs/ARCHITECTURE.md)
 - [Decisões técnicas](docs/DECISIONS.md)
+
+### Arquitetura de produção
+
+```mermaid
+flowchart LR
+    CLIENT[Browser] --> EDGE[Vercel CDN]
+    EDGE -->|páginas e assets| WEB[Vite service]
+    EDGE -->|/api e /actuator| API[Spring Boot OCI service]
+    API --> DB[(Neon PostgreSQL)]
+    API --> CEP[ViaCEP]
+```
+
+`vercel.json` descreve frontend e backend como serviços independentes do mesmo deploy. A Vercel roteia `/api/*` e `/actuator/*` para o container Java; demais caminhos seguem para a SPA. Banco, segredo JWT e credenciais administrativas são injetados por ambiente e não entram no repositório.
 
 ## Decisões de engenharia
 
@@ -165,7 +184,8 @@ Conteúdo binário fica em tabela separada. Usuário mantém somente metadado de
 │       └── pages
 ├── docs/
 ├── .github/workflows/
-└── docker-compose.yml
+├── docker-compose.yml
+└── vercel.json
 ```
 
 ## API principal
@@ -244,24 +264,25 @@ npm run dev
 
 Frontend abre em `http://localhost:5173` e encaminha `/api` para `http://localhost:8080`.
 
-## GitHub Pages
+## Deploy
 
-Workflow `pages.yml` prepara frontend para `https://<usuario>.github.io/<repositorio>/`, usando roteamento por hash para suportar SPA. Defina variável de repositório `VITE_API_URL` com URL HTTPS pública da API.
+Produção usa [Vercel Services](https://vercel.com/docs/services): frontend Vite e imagem OCI do Spring Boot compartilham domínio e regras de roteamento definidas em `vercel.json`. PostgreSQL Neon é conectado pelo Vercel Marketplace; Flyway aplica migrations quando a API inicia.
 
-GitHub Pages hospeda somente arquivos estáticos. Backend Spring Boot e PostgreSQL precisam ser publicados em serviço compatível com containers; sem `VITE_API_URL`, interface é publicada, mas autenticação remota não funciona.
+Workflow `pages.yml` permanece como demonstração estática e contingência do frontend. Versão funcional recomendada para avaliação é o deploy da Vercel.
 
 ## Variáveis de ambiente
 
 | Variável | Finalidade |
 |---|---|
-| `POSTGRES_DB` | Nome do banco |
-| `POSTGRES_USER` | Usuário do banco |
-| `POSTGRES_PASSWORD` | Senha do banco |
-| `JWT_SECRET` | Chave de assinatura JWT |
-| `ADMIN_CPF` | CPF do administrador inicial |
-| `ADMIN_PASSWORD` | Senha do administrador inicial |
+| `SPRING_DATASOURCE_URL` ou `PGHOST` + `PGDATABASE` | Conexão PostgreSQL |
+| `SPRING_DATASOURCE_USERNAME` ou `PGUSER` | Usuário do banco |
+| `SPRING_DATASOURCE_PASSWORD` ou `PGPASSWORD` | Senha do banco |
+| `APP_JWT_SECRET` ou `JWT_SECRET` | Chave de assinatura JWT |
+| `APP_ADMIN_CPF` ou `ADMIN_CPF` | CPF do administrador inicial |
+| `APP_ADMIN_PASSWORD` ou `ADMIN_PASSWORD` | Senha do administrador inicial |
 | `APP_CORS_ALLOWED_ORIGINS` | Origens aceitas pela API |
 | `VITE_API_URL` | URL pública da API usada pelo frontend |
+| `PORT` | Porta HTTP fornecida pela plataforma |
 
 ## Identidade visual
 
