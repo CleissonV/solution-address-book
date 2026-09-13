@@ -4,7 +4,7 @@ export const TOKEN_KEY = 'solution.access-token'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
-  timeout: 8_000,
+  timeout: 35_000,
 })
 
 api.interceptors.request.use((config) => {

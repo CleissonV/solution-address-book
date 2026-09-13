@@ -108,6 +108,8 @@ flowchart LR
 
 `vercel.json` descreve frontend e backend como serviços independentes do mesmo deploy. A Vercel roteia `/api/*` e `/actuator/*` para o container Java; demais caminhos seguem para a SPA. Banco, segredo JWT e credenciais administrativas são injetados por ambiente e não entram no repositório.
 
+Como containers sem tráfego podem escalar para zero, primeiro acesso após inatividade pode levar alguns segundos. Backend usa inicialização preguiçosa em produção e frontend tolera esse cold start sem interromper o login.
+
 ## Decisões de engenharia
 
 ### Consistência do endereço principal

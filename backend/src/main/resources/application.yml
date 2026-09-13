@@ -1,6 +1,8 @@
 spring:
   application:
     name: solution-address-book
+  main:
+    lazy-initialization: ${SPRING_MAIN_LAZY_INITIALIZATION:false}
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${PGHOST:localhost}:5432/${PGDATABASE:solution_address_book}}
     username: ${SPRING_DATASOURCE_USERNAME:${PGUSER:solution}}
