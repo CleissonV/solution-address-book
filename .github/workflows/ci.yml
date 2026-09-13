@@ -22,7 +22,7 @@ jobs:
           cache: maven
       - name: Testar API
         working-directory: backend
-        run: mvn -B test
+        run: mvn -B verify
 
   frontend:
     name: Frontend

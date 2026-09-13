@@ -1,6 +1,7 @@
 package br.com.solution.addressbook.api;
 
-import br.com.solution.addressbook.api.dto.UserDtos.ProfilePhotoResponse;
+import br.com.solution.addressbook.application.dto.UserDtos.ProfilePhotoResponse;
+import java.time.Duration;
 import br.com.solution.addressbook.application.ProfilePhotoService;
 import br.com.solution.addressbook.security.AuthenticatedUser;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class ProfilePhotoController {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(photo.contentType()))
                 .contentLength(content.length)
-                .cacheControl(CacheControl.noStore())
+                .cacheControl(CacheControl.maxAge(Duration.ofDays(365)).cachePrivate().immutable())
                 .eTag('"' + String.valueOf(photo.version()) + '"')
                 .body(content);
     }

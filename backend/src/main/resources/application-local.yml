@@ -1,0 +1,6 @@
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:${JWT_SECRET:VGhpcy1pcy1hLWRldmVsb3BtZW50LWtleS1jaGFuZ2UtaXQtaW4tcHJvZHVjdGlvbi0yMDI2}}
+  admin:
+    cpf: ${APP_ADMIN_CPF:${ADMIN_CPF:52998224725}}
+    password: ${APP_ADMIN_PASSWORD:${ADMIN_PASSWORD:Admin@123}}

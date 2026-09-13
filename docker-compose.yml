@@ -17,11 +17,13 @@ services:
   backend:
     build: ./backend
     environment:
+      SPRING_PROFILES_ACTIVE: local
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/${POSTGRES_DB:-solution_address_book}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-solution}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-solution_dev_password}
       APP_JWT_SECRET: ${JWT_SECRET:-VGhpcy1pcy1hLWRldmVsb3BtZW50LWtleS1jaGFuZ2UtaXQtaW4tcHJvZHVjdGlvbi0yMDI2}
       APP_ADMIN_CPF: ${ADMIN_CPF:-52998224725}
+      APP_ADMIN_NAME: ${ADMIN_NAME:-Administrador Solution}
       APP_ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin@123}
       APP_CORS_ALLOWED_ORIGINS: http://localhost:3000
     depends_on:
@@ -53,4 +55,3 @@ volumes:
 networks:
   solution-network:
     driver: bridge
-

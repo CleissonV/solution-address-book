@@ -1,22 +1,22 @@
 package br.com.solution.addressbook.application;
 
-import br.com.solution.addressbook.api.dto.UserDtos.CreateUserRequest;
-import br.com.solution.addressbook.api.dto.UserDtos.UpdateUserRequest;
-import br.com.solution.addressbook.api.dto.UserDtos.UpdateUserStatusRequest;
-import br.com.solution.addressbook.api.dto.UserDtos.UserDetailsResponse;
-import br.com.solution.addressbook.api.dto.UserSummary;
-import br.com.solution.addressbook.api.error.DomainException;
+import br.com.solution.addressbook.application.dto.UserDtos.CreateUserRequest;
+import br.com.solution.addressbook.application.dto.UserDtos.UpdateUserRequest;
+import br.com.solution.addressbook.application.dto.UserDtos.UpdateUserStatusRequest;
+import br.com.solution.addressbook.application.dto.UserDtos.UserDetailsResponse;
+import br.com.solution.addressbook.application.dto.UserSummary;
+import br.com.solution.addressbook.application.error.DomainException;
 import br.com.solution.addressbook.domain.user.UserEntity;
 import br.com.solution.addressbook.domain.user.UserRepository;
 import br.com.solution.addressbook.domain.user.UserRole;
 import br.com.solution.addressbook.domain.user.UserStatus;
 import br.com.solution.addressbook.security.AuthenticatedUser;
 import br.com.solution.addressbook.shared.Cpf;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,10 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Clock clock;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, Clock clock) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.clock = clock;
     }
 
     @Transactional
@@ -37,10 +39,10 @@ public class UserService {
     public UserSummary create(CreateUserRequest request) {
         String cpf = Cpf.normalize(request.cpf());
         if (!Cpf.isValid(cpf)) {
-            throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "INVALID_CPF", "CPF invalido.");
+            throw new DomainException("INVALID_CPF", "CPF invalido.");
         }
         if (userRepository.existsByCpf(cpf)) {
-            throw new DomainException(HttpStatus.CONFLICT, "CPF_ALREADY_EXISTS", "CPF ja cadastrado.");
+            throw new DomainException("CPF_ALREADY_EXISTS", "CPF ja cadastrado.");
         }
         UserEntity user = new UserEntity(request.name().trim(), cpf, request.birthDate(),
                 passwordEncoder.encode(request.password()), request.role());
@@ -76,22 +78,22 @@ public class UserService {
         assertActive(user);
         String cpf = Cpf.normalize(request.cpf());
         if (!Cpf.isValid(cpf)) {
-            throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "INVALID_CPF", "CPF invalido.");
+            throw new DomainException("INVALID_CPF", "CPF invalido.");
         }
         if (!cpf.equals(user.getCpf()) && userRepository.existsByCpf(cpf)) {
-            throw new DomainException(HttpStatus.CONFLICT, "CPF_ALREADY_EXISTS", "CPF ja cadastrado.");
+            throw new DomainException("CPF_ALREADY_EXISTS", "CPF ja cadastrado.");
         }
 
         boolean admin = "ADMIN".equals(actor.role());
         if (!admin && request.role() != null) {
-            throw new DomainException(HttpStatus.FORBIDDEN, "ROLE_CHANGE_FORBIDDEN",
+            throw new DomainException("ROLE_CHANGE_FORBIDDEN",
                     "Usuario comum nao pode alterar nivel de acesso.");
         }
 
         var role = admin && request.role() != null ? request.role() : user.getRole();
         if (user.getRole() == UserRole.ADMIN && role == UserRole.USER
                 && activeAdministrators(administrators) <= 1) {
-            throw new DomainException(HttpStatus.CONFLICT, "LAST_ACTIVE_ADMIN",
+            throw new DomainException("LAST_ACTIVE_ADMIN",
                     "O ultimo administrador ativo nao pode perder o nivel de acesso.");
         }
         user.updateProfile(request.name().trim(), cpf, request.birthDate(), role);
@@ -103,7 +105,7 @@ public class UserService {
     public UserDetailsResponse updateStatus(UUID requestedId, UpdateUserStatusRequest request,
                                             AuthenticatedUser actor) {
         if (request.status() == UserStatus.INACTIVE && actor.id().equals(requestedId)) {
-            throw new DomainException(HttpStatus.CONFLICT, "SELF_DEACTIVATION_FORBIDDEN",
+            throw new DomainException("SELF_DEACTIVATION_FORBIDDEN",
                     "Voce nao pode desativar a propria conta.");
         }
 
@@ -113,10 +115,10 @@ public class UserService {
 
         if (request.status() == UserStatus.INACTIVE) {
             if (user.getRole() == UserRole.ADMIN && activeAdministrators(administrators) <= 1) {
-                throw new DomainException(HttpStatus.CONFLICT, "LAST_ACTIVE_ADMIN",
+                throw new DomainException("LAST_ACTIVE_ADMIN",
                         "O ultimo administrador ativo nao pode ser desativado.");
             }
-            user.deactivate(actor.id(), Instant.now());
+            user.deactivate(actor.id(), Instant.now(clock));
         } else {
             user.reactivate();
         }
@@ -138,7 +140,7 @@ public class UserService {
 
     private void assertCanAccess(AuthenticatedUser actor, UUID requestedId) {
         if (!"ADMIN".equals(actor.role()) && !actor.id().equals(requestedId)) {
-            throw new DomainException(HttpStatus.FORBIDDEN, "ACCESS_DENIED",
+            throw new DomainException("ACCESS_DENIED",
                     "Voce nao pode acessar dados de outro usuario.");
         }
     }
@@ -149,12 +151,12 @@ public class UserService {
 
     private static void assertActive(UserEntity user) {
         if (!user.isActive()) {
-            throw new DomainException(HttpStatus.CONFLICT, "ACCOUNT_INACTIVE_READ_ONLY",
+            throw new DomainException("ACCOUNT_INACTIVE_READ_ONLY",
                     "Reative a conta antes de alterar seus dados.");
         }
     }
 
     private static DomainException notFound() {
-        return new DomainException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "Usuario nao encontrado.");
+        return new DomainException("USER_NOT_FOUND", "Usuario nao encontrado.");
     }
 }

@@ -1,14 +1,14 @@
 package br.com.solution.addressbook.application;
 
-import br.com.solution.addressbook.api.dto.UserDtos.ProfilePhotoResponse;
-import br.com.solution.addressbook.api.error.DomainException;
+import br.com.solution.addressbook.application.dto.UserDtos.ProfilePhotoResponse;
+import br.com.solution.addressbook.application.error.DomainException;
 import br.com.solution.addressbook.domain.user.ProfilePhotoEntity;
 import br.com.solution.addressbook.domain.user.ProfilePhotoRepository;
 import br.com.solution.addressbook.security.AuthenticatedUser;
 import java.io.IOException;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.UUID;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,10 +19,12 @@ public class ProfilePhotoService {
 
     private final ProfilePhotoRepository photoRepository;
     private final UserService userService;
+    private final Clock clock;
 
-    public ProfilePhotoService(ProfilePhotoRepository photoRepository, UserService userService) {
+    public ProfilePhotoService(ProfilePhotoRepository photoRepository, UserService userService, Clock clock) {
         this.photoRepository = photoRepository;
         this.userService = userService;
+        this.clock = clock;
     }
 
     @Transactional
@@ -31,7 +33,7 @@ public class ProfilePhotoService {
         var user = userService.requireAccessible(userId, actor);
         byte[] content = readAndValidate(file);
         String contentType = detectContentType(content);
-        Instant now = Instant.now();
+        Instant now = Instant.now(clock);
         long previousVersion = user.getProfilePhotoVersion() == null ? 0 : user.getProfilePhotoVersion();
         long version = Math.max(now.toEpochMilli(), previousVersion + 1);
 
@@ -49,7 +51,7 @@ public class ProfilePhotoService {
         return photoRepository.findById(userId)
                 .map(photo -> new ProfilePhotoContent(photo.getContentType(), photo.getContent(),
                         photo.getUpdatedAt().toEpochMilli()))
-                .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "PROFILE_PHOTO_NOT_FOUND",
+                .orElseThrow(() -> new DomainException("PROFILE_PHOTO_NOT_FOUND",
                         "Foto de perfil nao encontrada."));
     }
 
@@ -58,7 +60,7 @@ public class ProfilePhotoService {
         assertOwner(userId, actor);
         var user = userService.requireAccessible(userId, actor);
         if (!photoRepository.existsById(userId)) {
-            throw new DomainException(HttpStatus.NOT_FOUND, "PROFILE_PHOTO_NOT_FOUND",
+            throw new DomainException("PROFILE_PHOTO_NOT_FOUND",
                     "Foto de perfil nao encontrada.");
         }
         photoRepository.deleteById(userId);
@@ -67,24 +69,24 @@ public class ProfilePhotoService {
 
     private static void assertOwner(UUID userId, AuthenticatedUser actor) {
         if (!actor.id().equals(userId)) {
-            throw new DomainException(HttpStatus.FORBIDDEN, "PROFILE_PHOTO_SELF_ONLY",
+            throw new DomainException("PROFILE_PHOTO_SELF_ONLY",
                     "Somente o proprio usuario pode alterar a foto de perfil.");
         }
     }
 
     private static byte[] readAndValidate(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "EMPTY_PROFILE_PHOTO",
+            throw new DomainException("EMPTY_PROFILE_PHOTO",
                     "Selecione uma foto.");
         }
         if (file.getSize() > MAX_PHOTO_SIZE) {
-            throw new DomainException(HttpStatus.PAYLOAD_TOO_LARGE, "PHOTO_TOO_LARGE",
+            throw new DomainException("PHOTO_TOO_LARGE",
                     "A foto deve ter no maximo 2 MB.");
         }
         try {
             return file.getBytes();
         } catch (IOException exception) {
-            throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "PHOTO_READ_ERROR",
+            throw new DomainException("PHOTO_READ_ERROR",
                     "Nao foi possivel ler a foto.");
         }
     }
@@ -92,7 +94,7 @@ public class ProfilePhotoService {
     static String detectContentType(byte[] content) {
         if (isPng(content)) return "image/png";
         if (isJpeg(content)) return "image/jpeg";
-        throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "INVALID_PHOTO_TYPE",
+        throw new DomainException("INVALID_PHOTO_TYPE",
                 "Use uma imagem PNG ou JPEG.");
     }
 

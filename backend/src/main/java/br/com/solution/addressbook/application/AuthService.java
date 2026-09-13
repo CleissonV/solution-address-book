@@ -1,14 +1,13 @@
 package br.com.solution.addressbook.application;
 
-import br.com.solution.addressbook.api.dto.AuthDtos.LoginRequest;
-import br.com.solution.addressbook.api.dto.AuthDtos.LoginResponse;
-import br.com.solution.addressbook.api.error.DomainException;
+import br.com.solution.addressbook.application.dto.AuthDtos.LoginRequest;
+import br.com.solution.addressbook.application.dto.AuthDtos.LoginResponse;
+import br.com.solution.addressbook.application.error.DomainException;
 import br.com.solution.addressbook.domain.user.UserEntity;
 import br.com.solution.addressbook.domain.user.UserRepository;
 import br.com.solution.addressbook.security.AuthenticatedUser;
 import br.com.solution.addressbook.security.JwtService;
 import br.com.solution.addressbook.shared.Cpf;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ public class AuthService {
                 .orElseThrow(AuthService::invalidCredentials);
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) throw invalidCredentials();
         if (!user.isActive()) {
-            throw new DomainException(HttpStatus.FORBIDDEN, "ACCOUNT_INACTIVE",
+            throw new DomainException("ACCOUNT_INACTIVE",
                     "Conta desativada. Procure um administrador.");
         }
         AuthenticatedUser principal = AuthenticatedUser.from(user);
@@ -37,6 +36,6 @@ public class AuthService {
     }
 
     private static DomainException invalidCredentials() {
-        return new DomainException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "CPF ou senha invalidos.");
+        return new DomainException("INVALID_CREDENTIALS", "CPF ou senha invalidos.");
     }
 }

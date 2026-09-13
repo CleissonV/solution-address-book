@@ -4,15 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-import br.com.solution.addressbook.api.dto.UserDtos.UpdateUserRequest;
-import br.com.solution.addressbook.api.dto.UserDtos.UpdateUserStatusRequest;
-import br.com.solution.addressbook.api.error.DomainException;
+import br.com.solution.addressbook.application.dto.UserDtos.UpdateUserRequest;
+import br.com.solution.addressbook.application.dto.UserDtos.UpdateUserStatusRequest;
+import br.com.solution.addressbook.application.error.DomainException;
 import br.com.solution.addressbook.domain.user.UserEntity;
 import br.com.solution.addressbook.domain.user.UserRepository;
 import br.com.solution.addressbook.domain.user.UserRole;
 import br.com.solution.addressbook.domain.user.UserStatus;
 import br.com.solution.addressbook.security.AuthenticatedUser;
 import java.time.LocalDate;
+import java.time.Clock;
 import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +32,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new UserService(userRepository, passwordEncoder);
+        service = new UserService(userRepository, passwordEncoder, Clock.systemUTC());
     }
 
     @Test
@@ -76,7 +77,6 @@ class UserServiceTest {
                 new UpdateUserRequest("Usuario", "39053344705",
                         LocalDate.of(1990, 1, 1), UserRole.ADMIN), actor))
                 .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getStatus().value()).isEqualTo(403);
                     assertThat(exception.getCode()).isEqualTo("ROLE_CHANGE_FORBIDDEN");
                 });
     }
@@ -90,7 +90,7 @@ class UserServiceTest {
                 new UpdateUserRequest("Outro", "39053344705",
                         LocalDate.of(1990, 1, 1), null), actor(actorId, UserRole.USER)))
                 .isInstanceOfSatisfying(DomainException.class,
-                        exception -> assertThat(exception.getStatus().value()).isEqualTo(403));
+                        exception -> assertThat(exception.getCode()).isEqualTo("ACCESS_DENIED"));
     }
 
     @Test
@@ -119,7 +119,6 @@ class UserServiceTest {
         assertThatThrownBy(() -> service.updateStatus(adminId,
                 new UpdateUserStatusRequest(UserStatus.INACTIVE), actor(adminId, UserRole.ADMIN)))
                 .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getStatus().value()).isEqualTo(409);
                     assertThat(exception.getCode()).isEqualTo("SELF_DEACTIVATION_FORBIDDEN");
                 });
     }

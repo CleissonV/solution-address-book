@@ -20,7 +20,7 @@ spring:
   cache:
     cache-names: postalCodes
     caffeine:
-      spec: maximumSize=10000,expireAfterWrite=24h
+      spec: maximumSize=10000,expireAfterWrite=24h,recordStats
   servlet:
     multipart:
       max-file-size: 2MB
@@ -45,12 +45,13 @@ management:
 
 app:
   jwt:
-    secret: ${APP_JWT_SECRET:VGhpcy1pcy1hLWRldmVsb3BtZW50LWtleS1jaGFuZ2UtaXQtaW4tcHJvZHVjdGlvbi0yMDI2}
+    secret: ${APP_JWT_SECRET:${JWT_SECRET}}
     expiration: 8h
+    issuer: solution-address-book
   admin:
     name: ${APP_ADMIN_NAME:Administrador Solution}
-    cpf: ${APP_ADMIN_CPF:52998224725}
-    password: ${APP_ADMIN_PASSWORD:Admin@123}
+    cpf: ${APP_ADMIN_CPF:${ADMIN_CPF}}
+    password: ${APP_ADMIN_PASSWORD:${ADMIN_PASSWORD}}
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
   viacep:

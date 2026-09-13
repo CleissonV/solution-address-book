@@ -1,4 +1,4 @@
-package br.com.solution.addressbook.api.dto;
+package br.com.solution.addressbook.application.dto;
 
 import br.com.solution.addressbook.domain.user.UserRole;
 import br.com.solution.addressbook.domain.user.UserStatus;
@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ public final class UserDtos {
 
     public record CreateUserRequest(
             @NotBlank @Size(max = 160) String name,
-            @NotBlank String cpf,
+            @NotBlank @Size(max = 14) String cpf,
             @NotNull @Past LocalDate birthDate,
             @NotBlank @Size(min = 8, max = 72) String password,
             @NotNull UserRole role
@@ -24,7 +24,7 @@ public final class UserDtos {
 
     public record UpdateUserRequest(
             @NotBlank @Size(max = 160) String name,
-            @NotBlank String cpf,
+            @NotBlank @Size(max = 14) String cpf,
             @NotNull @Past LocalDate birthDate,
             UserRole role
     ) {}

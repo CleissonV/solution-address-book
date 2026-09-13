@@ -1,8 +1,8 @@
 package br.com.solution.addressbook.application;
 
-import br.com.solution.addressbook.api.dto.AddressDtos.AddressResponse;
-import br.com.solution.addressbook.api.dto.UserDtos.UserDetailsResponse;
-import br.com.solution.addressbook.api.dto.UserSummary;
+import br.com.solution.addressbook.application.dto.AddressDtos.AddressResponse;
+import br.com.solution.addressbook.application.dto.UserDtos.UserDetailsResponse;
+import br.com.solution.addressbook.application.dto.UserSummary;
 import br.com.solution.addressbook.domain.address.AddressEntity;
 import br.com.solution.addressbook.domain.user.UserEntity;
 

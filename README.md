@@ -48,7 +48,7 @@ Docker Compose cria PostgreSQL, executa migrações Flyway, compila backend e fr
 | CEP | Consulta ViaCEP validada também no backend, com timeout e cache Caffeine |
 | Dados | PostgreSQL 17 local, Neon Postgres em produção, Flyway, UUID, constraints e índice único parcial |
 | Interface | React 19, TypeScript, React Query, shadcn/ui, Radix, CVA e layout responsivo |
-| Qualidade | 23 testes backend, 6 frontend e 2 jornadas E2E com Playwright |
+| Qualidade | 35 testes backend, 6 frontend e 2 jornadas E2E com Playwright |
 | Operação | Docker multi-stage, usuário não-root, healthchecks, CI e deploy full stack na Vercel |
 
 ## Requisitos e regras de negócio
@@ -106,7 +106,7 @@ flowchart LR
     API --> CEP[ViaCEP]
 ```
 
-`vercel.json` descreve frontend e backend como serviços independentes do mesmo deploy. A Vercel roteia `/api/*` e `/actuator/*` para o container Java; demais caminhos seguem para a SPA. Banco, segredo JWT e credenciais administrativas são injetados por ambiente e não entram no repositório.
+`vercel.json` descreve frontend e backend como serviços independentes do mesmo deploy. A Vercel roteia `/api/*` e `/actuator/*` para o container Java; demais caminhos seguem para a SPA. Em produção, segredo JWT e credenciais administrativas são obrigatórios e injetados por ambiente, sem fallback. Valores demonstrativos existem somente no perfil `local`, no Compose e no `.env.example`.
 
 Como containers sem tráfego podem escalar para zero, primeiro acesso após inatividade pode levar alguns segundos. Backend usa inicialização preguiçosa em produção e frontend tolera esse cold start sem interromper o login.
 

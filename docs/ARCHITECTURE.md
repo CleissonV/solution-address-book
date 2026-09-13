@@ -64,7 +64,7 @@ O lock no usuário também cobre o caso de primeiro endereço, quando ainda não
 - Proteção contra IDOR: regra fica no serviço, não só na rota ou interface.
 - Senha: nunca aparece em resposta ou log.
 - CORS: origens configuráveis.
-- Segredos: variáveis de ambiente; valores do Compose servem somente para desenvolvimento.
+- Segredos: obrigatórios no perfil padrão; valores demonstrativos ficam isolados no perfil `local` e no Compose.
 - Container: processo Java executado por usuário sem privilégios.
 
 ## Resiliência
@@ -92,10 +92,10 @@ API não mantém sessão em memória e aceita múltiplas réplicas. Próximos pa
 - JWT sem refresh token: reduz superfície do desafio; produção pode usar access token curto + refresh token rotacionado.
 - Seed de admin: facilita avaliação; produção deve usar provisioning seguro e senha temporária.
 
-## Testes recomendados para evolução
+## Estratégia de testes
 
-- Integração com Testcontainers/PostgreSQL para validar índice parcial e Flyway.
-- Testes de autorização para todos os endpoints com admin, dono e terceiro.
-- Contract test da ViaCEP com WireMock.
-- E2E com Playwright cobrindo login, usuário, endereço e promoção de principal.
-- Teste concorrente com duas promoções simultâneas.
+- Testes unitários cobrem autenticação, CPF, usuários, fotos e invariantes de endereços.
+- Testes com contexto Spring validam contrato `401/403` e segurança por papel.
+- Testes MVC validam erros de JSON e campos obrigatórios.
+- E2E com Playwright cobre login, usuário e endereços pela interface real.
+- Próxima evolução: Testcontainers/PostgreSQL para Flyway e índice parcial, WireMock para ViaCEP e teste concorrente de duas promoções simultâneas.

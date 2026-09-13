@@ -3,6 +3,7 @@ spring:
     url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: create-drop
   flyway:
@@ -11,6 +12,7 @@ app:
   jwt:
     secret: VGhpcy1pcy1hLWRldmVsb3BtLWtleS10aGF0LWlzLWxvbmctZW5vdWdoLTIwMjY=
     expiration: 1h
+    issuer: solution-address-book-test
   admin:
     name: Test Admin
     cpf: 52998224725

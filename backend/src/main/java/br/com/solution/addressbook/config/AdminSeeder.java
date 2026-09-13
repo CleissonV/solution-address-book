@@ -7,12 +7,12 @@ import br.com.solution.addressbook.shared.Cpf;
 import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AdminSeeder implements ApplicationRunner {
@@ -35,13 +35,26 @@ public class AdminSeeder implements ApplicationRunner {
     }
 
     @Override
-    @Transactional
     public void run(ApplicationArguments args) {
-        if (!repository.existsByCpf(cpf)) {
-            repository.save(new UserEntity(name, cpf, LocalDate.of(1990, 1, 1),
+        validateConfiguration();
+        if (repository.existsByCpf(cpf)) return;
+
+        try {
+            repository.saveAndFlush(new UserEntity(name, cpf, LocalDate.of(1990, 1, 1),
                     encoder.encode(password), UserRole.ADMIN));
             log.info("Initial administrator created");
+        } catch (DataIntegrityViolationException exception) {
+            if (!repository.existsByCpf(cpf)) throw exception;
+            log.info("Initial administrator already created by another instance");
+        }
+    }
+
+    private void validateConfiguration() {
+        if (!Cpf.isValid(cpf)) {
+            throw new IllegalStateException("APP_ADMIN_CPF must contain a valid CPF");
+        }
+        if (password == null || password.length() < 8 || password.length() > 72) {
+            throw new IllegalStateException("APP_ADMIN_PASSWORD must contain between 8 and 72 characters");
         }
     }
 }
-

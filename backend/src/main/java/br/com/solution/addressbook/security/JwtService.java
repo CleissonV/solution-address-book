@@ -15,11 +15,14 @@ import org.springframework.stereotype.Service;
 public class JwtService {
     private final SecretKey key;
     private final Duration expiration;
+    private final String issuer;
 
     public JwtService(@Value("${app.jwt.secret}") String secret,
-                      @Value("${app.jwt.expiration}") Duration expiration) {
+                      @Value("${app.jwt.expiration}") Duration expiration,
+                      @Value("${app.jwt.issuer}") String issuer) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
         this.expiration = expiration;
+        this.issuer = issuer;
     }
 
     public String issue(AuthenticatedUser user) {
@@ -27,6 +30,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(user.id().toString())
                 .claim("role", user.role())
+                .issuer(issuer)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(expiration)))
                 .signWith(key)
@@ -34,8 +38,8 @@ public class JwtService {
     }
 
     public String subject(String token) {
-        Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+        Claims claims = Jwts.parser().verifyWith(key).requireIssuer(issuer).build()
+                .parseSignedClaims(token).getPayload();
         return claims.getSubject();
     }
 }
-

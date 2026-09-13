@@ -1,4 +1,4 @@
-package br.com.solution.addressbook.api.dto;
+package br.com.solution.addressbook.application.dto;
 
 import br.com.solution.addressbook.domain.user.UserRole;
 import br.com.solution.addressbook.domain.user.UserStatus;

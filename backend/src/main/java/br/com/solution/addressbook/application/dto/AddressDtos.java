@@ -1,4 +1,4 @@
-package br.com.solution.addressbook.api.dto;
+package br.com.solution.addressbook.application.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -8,7 +8,7 @@ public final class AddressDtos {
     private AddressDtos() {}
 
     public record UpsertAddressRequest(
-            @NotBlank String zipCode,
+            @NotBlank @Size(max = 9) String zipCode,
             @NotBlank @Size(max = 20) String number,
             @Size(max = 120) String complement,
             boolean primary

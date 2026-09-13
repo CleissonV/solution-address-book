@@ -7,13 +7,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import br.com.solution.addressbook.api.error.DomainException;
+import br.com.solution.addressbook.application.error.DomainException;
 import br.com.solution.addressbook.domain.user.ProfilePhotoEntity;
 import br.com.solution.addressbook.domain.user.ProfilePhotoRepository;
 import br.com.solution.addressbook.domain.user.UserEntity;
 import br.com.solution.addressbook.domain.user.UserRole;
 import br.com.solution.addressbook.security.AuthenticatedUser;
 import java.time.LocalDate;
+import java.time.Clock;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ class ProfilePhotoServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new ProfilePhotoService(photoRepository, userService);
+        service = new ProfilePhotoService(photoRepository, userService, Clock.systemUTC());
     }
 
     @Test
@@ -58,7 +59,6 @@ class ProfilePhotoServiceTest {
         assertThatThrownBy(() -> service.upload(userId,
                 new MockMultipartFile("file", "fake.png", "image/png", "not-an-image".getBytes()), actor(userId)))
                 .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getStatus().value()).isEqualTo(422);
                     assertThat(exception.getCode()).isEqualTo("INVALID_PHOTO_TYPE");
                 });
     }
@@ -72,7 +72,6 @@ class ProfilePhotoServiceTest {
                 new MockMultipartFile("file", "large.png", "image/png",
                         new byte[ProfilePhotoService.MAX_PHOTO_SIZE + 1]), actor(userId)))
                 .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getStatus().value()).isEqualTo(413);
                     assertThat(exception.getCode()).isEqualTo("PHOTO_TOO_LARGE");
                 });
     }
@@ -100,7 +99,6 @@ class ProfilePhotoServiceTest {
                 new MockMultipartFile("file", "profile.png", "image/png", new byte[] {(byte) 0x89}),
                 administrator))
                 .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getStatus().value()).isEqualTo(403);
                     assertThat(exception.getCode()).isEqualTo("PROFILE_PHOTO_SELF_ONLY");
                 });
 
@@ -114,7 +112,6 @@ class ProfilePhotoServiceTest {
 
         assertThatThrownBy(() -> service.delete(userId, administrator))
                 .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getStatus().value()).isEqualTo(403);
                     assertThat(exception.getCode()).isEqualTo("PROFILE_PHOTO_SELF_ONLY");
                 });
 

@@ -1,7 +1,7 @@
 package br.com.solution.addressbook.api;
 
-import br.com.solution.addressbook.api.dto.AuthDtos.LoginRequest;
-import br.com.solution.addressbook.api.dto.AuthDtos.LoginResponse;
+import br.com.solution.addressbook.application.dto.AuthDtos.LoginRequest;
+import br.com.solution.addressbook.application.dto.AuthDtos.LoginResponse;
 import br.com.solution.addressbook.application.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,4 +22,3 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 }
-

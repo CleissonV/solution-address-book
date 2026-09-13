@@ -32,11 +32,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails user = userDetailsService.loadUserByUsername(jwtService.subject(header.substring(7)));
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (JwtException | org.springframework.security.core.userdetails.UsernameNotFoundException ignored) {
+            } catch (JwtException | IllegalArgumentException |
+                     org.springframework.security.core.userdetails.UsernameNotFoundException ignored) {
                 SecurityContextHolder.clearContext();
             }
         }
         filterChain.doFilter(request, response);
     }
 }
-
