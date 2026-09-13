@@ -7,7 +7,12 @@ Aplicação full stack para gestão de usuários e múltiplos endereços, desenv
 [![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)](https://react.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
-[![Testes](https://img.shields.io/badge/testes-31%20aprovados-168456)](#testes-e-qualidade)
+[![CI](https://github.com/CleissonV/solution-address-book/actions/workflows/ci.yml/badge.svg)](https://github.com/CleissonV/solution-address-book/actions/workflows/ci.yml)
+[![GitHub Pages](https://github.com/CleissonV/solution-address-book/actions/workflows/pages.yml/badge.svg)](https://cleissonv.github.io/solution-address-book/)
+
+**[Abrir interface publicada no GitHub Pages](https://cleissonv.github.io/solution-address-book/)**
+
+> GitHub Pages demonstra frontend responsivo. Login público depende da API Spring configurada em `VITE_API_URL`; execução full stack completa está disponível via Docker.
 
 ## Para o avaliador
 
