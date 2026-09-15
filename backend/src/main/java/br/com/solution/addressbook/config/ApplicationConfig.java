@@ -22,8 +22,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    RestClient viaCepRestClient(RestClient.Builder builder,
-                                @Value("${app.viacep.base-url}") String baseUrl) {
+    RestClient viaCepRestClient(
+            RestClient.Builder builder, @Value("${app.viacep.base-url}") String baseUrl) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(2_000);
         factory.setReadTimeout(4_000);

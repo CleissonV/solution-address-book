@@ -10,20 +10,39 @@ public final class UserMapper {
     private UserMapper() {}
 
     public static UserSummary toSummary(UserEntity user) {
-        return new UserSummary(user.getId(), user.getName(), user.getCpf(), user.getBirthDate(), user.getRole(),
-                user.getProfilePhotoVersion(), user.getStatus());
+        return new UserSummary(
+                user.getId(),
+                user.getName(),
+                user.getCpf(),
+                user.getBirthDate(),
+                user.getRole(),
+                user.getProfilePhotoVersion(),
+                user.getStatus());
     }
 
     public static UserDetailsResponse toDetails(UserEntity user) {
-        return new UserDetailsResponse(user.getId(), user.getName(), user.getCpf(), user.getBirthDate(),
-                user.getRole(), user.getProfilePhotoVersion(),
-                user.getStatus(), user.getDeactivatedAt(),
+        return new UserDetailsResponse(
+                user.getId(),
+                user.getName(),
+                user.getCpf(),
+                user.getBirthDate(),
+                user.getRole(),
+                user.getProfilePhotoVersion(),
+                user.getStatus(),
+                user.getDeactivatedAt(),
                 user.getAddresses().stream().map(UserMapper::toAddress).toList());
     }
 
     public static AddressResponse toAddress(AddressEntity address) {
-        return new AddressResponse(address.getId(), address.getZipCode(), address.getNumber(),
-                address.getComplement(), address.getStreet(), address.getNeighborhood(), address.getCity(),
-                address.getState(), address.isPrimary());
+        return new AddressResponse(
+                address.getId(),
+                address.getZipCode(),
+                address.getNumber(),
+                address.getComplement(),
+                address.getStreet(),
+                address.getNeighborhood(),
+                address.getCity(),
+                address.getState(),
+                address.isPrimary());
     }
 }

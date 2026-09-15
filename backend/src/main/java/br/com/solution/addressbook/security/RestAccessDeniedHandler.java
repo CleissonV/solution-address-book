@@ -18,9 +18,15 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
     }
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response,
-                       AccessDeniedException exception) throws IOException, ServletException {
-        errorWriter.write(response, HttpStatus.FORBIDDEN, "ACCESS_DENIED",
+    public void handle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AccessDeniedException exception)
+            throws IOException, ServletException {
+        errorWriter.write(
+                response,
+                HttpStatus.FORBIDDEN,
+                "ACCESS_DENIED",
                 "Voce nao tem permissao para esta acao.");
     }
 }

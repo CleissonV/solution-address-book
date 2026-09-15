@@ -40,15 +40,22 @@ class AddressServiceTest {
     @Test
     void firstAddressIsAlwaysPrimary() {
         UUID userId = UUID.randomUUID();
-        UserEntity user = new UserEntity("Ana", "52998224725", LocalDate.of(1990, 1, 1), "hash", UserRole.USER);
+        UserEntity user =
+                new UserEntity(
+                        "Ana", "52998224725", LocalDate.of(1990, 1, 1), "hash", UserRole.USER);
         AuthenticatedUser actor = new AuthenticatedUser(userId, "52998224725", "hash", "USER");
         when(userService.requireAccessible(userId, actor)).thenReturn(user);
         when(postalCodeLookup.lookup("20040020"))
-                .thenReturn(new PostalCodeResponse("20040020", "Rua da Assembleia", "Centro", "Rio de Janeiro", "RJ"));
+                .thenReturn(
+                        new PostalCodeResponse(
+                                "20040020", "Rua da Assembleia", "Centro", "Rio de Janeiro", "RJ"));
         when(addressRepository.findAllForUpdate(userId)).thenReturn(List.of());
-        when(addressRepository.save(any(AddressEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(addressRepository.save(any(AddressEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        var result = service.create(userId, new UpsertAddressRequest("20040020", "10", null, false), actor);
+        var result =
+                service.create(
+                        userId, new UpsertAddressRequest("20040020", "10", null, false), actor);
 
         assertThat(result.primary()).isTrue();
         assertThat(result.city()).isEqualTo("Rio de Janeiro");
@@ -91,12 +98,15 @@ class AddressServiceTest {
         when(addressRepository.findAllForUpdate(userId)).thenReturn(List.of());
 
         assertThatThrownBy(() -> service.setPrimary(userId, UUID.randomUUID(), actor(userId)))
-                .isInstanceOfSatisfying(DomainException.class,
-                        exception -> assertThat(exception.getCode()).isEqualTo("ADDRESS_NOT_FOUND"));
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception ->
+                                assertThat(exception.getCode()).isEqualTo("ADDRESS_NOT_FOUND"));
     }
 
     private static UserEntity user() {
-        return new UserEntity("Ana", "52998224725", LocalDate.of(1990, 1, 1), "hash", UserRole.USER);
+        return new UserEntity(
+                "Ana", "52998224725", LocalDate.of(1990, 1, 1), "hash", UserRole.USER);
     }
 
     private static AuthenticatedUser actor(UUID id) {
@@ -104,8 +114,17 @@ class AddressServiceTest {
     }
 
     private static AddressEntity address(UserEntity user, boolean primary) {
-        AddressEntity address = new AddressEntity(user, "20040020", "10", null,
-                "Rua da Assembleia", "Centro", "Rio de Janeiro", "RJ", primary);
+        AddressEntity address =
+                new AddressEntity(
+                        user,
+                        "20040020",
+                        "10",
+                        null,
+                        "Rua da Assembleia",
+                        "Centro",
+                        "Rio de Janeiro",
+                        "RJ",
+                        primary);
         ReflectionTestUtils.setField(address, "id", UUID.randomUUID());
         return address;
     }

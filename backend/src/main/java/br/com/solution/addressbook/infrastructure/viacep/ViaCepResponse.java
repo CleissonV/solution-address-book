@@ -9,6 +9,4 @@ public record ViaCepResponse(
         String bairro,
         String localidade,
         String uf,
-        @JsonProperty("erro") Boolean error
-) {}
-
+        @JsonProperty("erro") Boolean error) {}

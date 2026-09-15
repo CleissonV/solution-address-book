@@ -12,10 +12,10 @@ import br.com.solution.addressbook.domain.user.UserRepository;
 import br.com.solution.addressbook.domain.user.UserRole;
 import br.com.solution.addressbook.domain.user.UserStatus;
 import br.com.solution.addressbook.security.AuthenticatedUser;
-import java.time.LocalDate;
 import java.time.Clock;
-import java.util.Optional;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,9 +42,15 @@ class UserServiceTest {
         AuthenticatedUser admin = actor(UUID.randomUUID(), UserRole.ADMIN);
         when(userRepository.findByIdForUpdate(requestedId)).thenReturn(Optional.of(user));
 
-        var result = service.update(requestedId,
-                new UpdateUserRequest("Usuario Atualizado", "52998224725",
-                        LocalDate.of(1992, 5, 14), UserRole.ADMIN), admin);
+        var result =
+                service.update(
+                        requestedId,
+                        new UpdateUserRequest(
+                                "Usuario Atualizado",
+                                "52998224725",
+                                LocalDate.of(1992, 5, 14),
+                                UserRole.ADMIN),
+                        admin);
 
         assertThat(result.name()).isEqualTo("Usuario Atualizado");
         assertThat(result.cpf()).isEqualTo("52998224725");
@@ -58,9 +64,12 @@ class UserServiceTest {
         AuthenticatedUser actor = actor(requestedId, UserRole.USER);
         when(userRepository.findByIdForUpdate(requestedId)).thenReturn(Optional.of(user));
 
-        var result = service.update(requestedId,
-                new UpdateUserRequest("Meu Novo Nome", "39053344705",
-                        LocalDate.of(1993, 6, 20), null), actor);
+        var result =
+                service.update(
+                        requestedId,
+                        new UpdateUserRequest(
+                                "Meu Novo Nome", "39053344705", LocalDate.of(1993, 6, 20), null),
+                        actor);
 
         assertThat(result.name()).isEqualTo("Meu Novo Nome");
         assertThat(result.role()).isEqualTo(UserRole.USER);
@@ -73,12 +82,21 @@ class UserServiceTest {
         AuthenticatedUser actor = actor(requestedId, UserRole.USER);
         when(userRepository.findByIdForUpdate(requestedId)).thenReturn(Optional.of(user));
 
-        assertThatThrownBy(() -> service.update(requestedId,
-                new UpdateUserRequest("Usuario", "39053344705",
-                        LocalDate.of(1990, 1, 1), UserRole.ADMIN), actor))
-                .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getCode()).isEqualTo("ROLE_CHANGE_FORBIDDEN");
-                });
+        assertThatThrownBy(
+                        () ->
+                                service.update(
+                                        requestedId,
+                                        new UpdateUserRequest(
+                                                "Usuario",
+                                                "39053344705",
+                                                LocalDate.of(1990, 1, 1),
+                                                UserRole.ADMIN),
+                                        actor))
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception -> {
+                            assertThat(exception.getCode()).isEqualTo("ROLE_CHANGE_FORBIDDEN");
+                        });
     }
 
     @Test
@@ -86,10 +104,18 @@ class UserServiceTest {
         UUID actorId = UUID.randomUUID();
         UUID requestedId = UUID.randomUUID();
 
-        assertThatThrownBy(() -> service.update(requestedId,
-                new UpdateUserRequest("Outro", "39053344705",
-                        LocalDate.of(1990, 1, 1), null), actor(actorId, UserRole.USER)))
-                .isInstanceOfSatisfying(DomainException.class,
+        assertThatThrownBy(
+                        () ->
+                                service.update(
+                                        requestedId,
+                                        new UpdateUserRequest(
+                                                "Outro",
+                                                "39053344705",
+                                                LocalDate.of(1990, 1, 1),
+                                                null),
+                                        actor(actorId, UserRole.USER)))
+                .isInstanceOfSatisfying(
+                        DomainException.class,
                         exception -> assertThat(exception.getCode()).isEqualTo("ACCESS_DENIED"));
     }
 
@@ -101,10 +127,12 @@ class UserServiceTest {
         when(userRepository.findAllByRoleForUpdate(UserRole.ADMIN)).thenReturn(List.of());
         when(userRepository.findByIdForUpdate(requestedId)).thenReturn(Optional.of(user));
 
-        var inactive = service.updateStatus(requestedId,
-                new UpdateUserStatusRequest(UserStatus.INACTIVE), admin);
-        var active = service.updateStatus(requestedId,
-                new UpdateUserStatusRequest(UserStatus.ACTIVE), admin);
+        var inactive =
+                service.updateStatus(
+                        requestedId, new UpdateUserStatusRequest(UserStatus.INACTIVE), admin);
+        var active =
+                service.updateStatus(
+                        requestedId, new UpdateUserStatusRequest(UserStatus.ACTIVE), admin);
 
         assertThat(inactive.status()).isEqualTo(UserStatus.INACTIVE);
         assertThat(inactive.deactivatedAt()).isNotNull();
@@ -116,25 +144,42 @@ class UserServiceTest {
     void adminCannotDeactivateOwnAccount() {
         UUID adminId = UUID.randomUUID();
 
-        assertThatThrownBy(() -> service.updateStatus(adminId,
-                new UpdateUserStatusRequest(UserStatus.INACTIVE), actor(adminId, UserRole.ADMIN)))
-                .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getCode()).isEqualTo("SELF_DEACTIVATION_FORBIDDEN");
-                });
+        assertThatThrownBy(
+                        () ->
+                                service.updateStatus(
+                                        adminId,
+                                        new UpdateUserStatusRequest(UserStatus.INACTIVE),
+                                        actor(adminId, UserRole.ADMIN)))
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception -> {
+                            assertThat(exception.getCode())
+                                    .isEqualTo("SELF_DEACTIVATION_FORBIDDEN");
+                        });
     }
 
     @Test
     void lastActiveAdministratorCannotLoseRole() {
         UUID adminId = UUID.randomUUID();
         UserEntity administrator = user("Admin", "52998224725", UserRole.ADMIN);
-        when(userRepository.findAllByRoleForUpdate(UserRole.ADMIN)).thenReturn(List.of(administrator));
+        when(userRepository.findAllByRoleForUpdate(UserRole.ADMIN))
+                .thenReturn(List.of(administrator));
         when(userRepository.findByIdForUpdate(adminId)).thenReturn(Optional.of(administrator));
 
-        assertThatThrownBy(() -> service.update(adminId,
-                new UpdateUserRequest("Admin", "52998224725",
-                        LocalDate.of(1990, 1, 1), UserRole.USER), actor(adminId, UserRole.ADMIN)))
-                .isInstanceOfSatisfying(DomainException.class, exception ->
-                        assertThat(exception.getCode()).isEqualTo("LAST_ACTIVE_ADMIN"));
+        assertThatThrownBy(
+                        () ->
+                                service.update(
+                                        adminId,
+                                        new UpdateUserRequest(
+                                                "Admin",
+                                                "52998224725",
+                                                LocalDate.of(1990, 1, 1),
+                                                UserRole.USER),
+                                        actor(adminId, UserRole.ADMIN)))
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception ->
+                                assertThat(exception.getCode()).isEqualTo("LAST_ACTIVE_ADMIN"));
     }
 
     @Test
@@ -144,11 +189,21 @@ class UserServiceTest {
         user.deactivate(UUID.randomUUID(), java.time.Instant.now());
         when(userRepository.findByIdForUpdate(userId)).thenReturn(Optional.of(user));
 
-        assertThatThrownBy(() -> service.update(userId,
-                new UpdateUserRequest("Novo Nome", "39053344705",
-                        LocalDate.of(1990, 1, 1), null), actor(UUID.randomUUID(), UserRole.ADMIN)))
-                .isInstanceOfSatisfying(DomainException.class, exception ->
-                        assertThat(exception.getCode()).isEqualTo("ACCOUNT_INACTIVE_READ_ONLY"));
+        assertThatThrownBy(
+                        () ->
+                                service.update(
+                                        userId,
+                                        new UpdateUserRequest(
+                                                "Novo Nome",
+                                                "39053344705",
+                                                LocalDate.of(1990, 1, 1),
+                                                null),
+                                        actor(UUID.randomUUID(), UserRole.ADMIN)))
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception ->
+                                assertThat(exception.getCode())
+                                        .isEqualTo("ACCOUNT_INACTIVE_READ_ONLY"));
     }
 
     private static UserEntity user(String name, String cpf, UserRole role) {

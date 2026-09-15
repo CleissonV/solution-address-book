@@ -17,23 +17,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(
+            JwtService jwtService, CustomUserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")
+        if (header != null
+                && header.startsWith("Bearer ")
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                UserDetails user = userDetailsService.loadUserByUsername(jwtService.subject(header.substring(7)));
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                UserDetails user =
+                        userDetailsService.loadUserByUsername(
+                                jwtService.subject(header.substring(7)));
+                var authentication =
+                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (JwtException | IllegalArgumentException |
-                     org.springframework.security.core.userdetails.UsernameNotFoundException ignored) {
+            } catch (JwtException
+                    | IllegalArgumentException
+                    | org.springframework.security.core.userdetails.UsernameNotFoundException
+                            ignored) {
                 SecurityContextHolder.clearContext();
             }
         }

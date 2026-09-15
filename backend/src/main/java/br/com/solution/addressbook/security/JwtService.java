@@ -17,9 +17,10 @@ public class JwtService {
     private final Duration expiration;
     private final String issuer;
 
-    public JwtService(@Value("${app.jwt.secret}") String secret,
-                      @Value("${app.jwt.expiration}") Duration expiration,
-                      @Value("${app.jwt.issuer}") String issuer) {
+    public JwtService(
+            @Value("${app.jwt.secret}") String secret,
+            @Value("${app.jwt.expiration}") Duration expiration,
+            @Value("${app.jwt.issuer}") String issuer) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
         this.expiration = expiration;
         this.issuer = issuer;
@@ -38,8 +39,13 @@ public class JwtService {
     }
 
     public String subject(String token) {
-        Claims claims = Jwts.parser().verifyWith(key).requireIssuer(issuer).build()
-                .parseSignedClaims(token).getPayload();
+        Claims claims =
+                Jwts.parser()
+                        .verifyWith(key)
+                        .requireIssuer(issuer)
+                        .build()
+                        .parseSignedClaims(token)
+                        .getPayload();
         return claims.getSubject();
     }
 }

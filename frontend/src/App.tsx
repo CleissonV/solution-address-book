@@ -1,9 +1,9 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { AppShell } from './components/AppShell'
-import { ProtectedRoute } from './components/ProtectedRoute'
-import { LoginPage } from './pages/LoginPage'
-import { UserDetailPage } from './pages/UserDetailPage'
-import { UsersPage } from './pages/UsersPage'
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { AppShell } from './components/AppShell';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { LoginPage } from './pages/LoginPage';
+import { UserDetailPage } from './pages/UserDetailPage';
+import { UsersPage } from './pages/UsersPage';
 
 export default function App() {
   return (
@@ -17,5 +17,5 @@ export default function App() {
       </Route>
       <Route path="*" element={<Navigate to="/users" replace />} />
     </Routes>
-  )
+  );
 }

@@ -1,5 +1,7 @@
 .idea/
-.vscode/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 *.iml
 .env
 .env.local

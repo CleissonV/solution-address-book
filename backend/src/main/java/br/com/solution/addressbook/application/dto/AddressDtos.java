@@ -11,8 +11,7 @@ public final class AddressDtos {
             @NotBlank @Size(max = 9) String zipCode,
             @NotBlank @Size(max = 20) String number,
             @Size(max = 120) String complement,
-            boolean primary
-    ) {}
+            boolean primary) {}
 
     public record AddressResponse(
             UUID id,
@@ -23,14 +22,8 @@ public final class AddressDtos {
             String neighborhood,
             String city,
             String state,
-            boolean primary
-    ) {}
+            boolean primary) {}
 
     public record PostalCodeResponse(
-            String zipCode,
-            String street,
-            String neighborhood,
-            String city,
-            String state
-    ) {}
+            String zipCode, String street, String neighborhood, String city, String state) {}
 }

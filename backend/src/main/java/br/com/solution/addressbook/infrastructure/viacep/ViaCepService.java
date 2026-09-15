@@ -17,7 +17,9 @@ public class ViaCepService implements PostalCodeLookup {
         this.restClient = viaCepRestClient;
     }
 
-    @Cacheable(cacheNames = "postalCodes", key = "T(br.com.solution.addressbook.shared.PostalCode).normalize(#zipCode)")
+    @Cacheable(
+            cacheNames = "postalCodes",
+            key = "T(br.com.solution.addressbook.shared.PostalCode).normalize(#zipCode)")
     @Override
     public PostalCodeResponse lookup(String zipCode) {
         String normalized = PostalCode.normalize(zipCode);
@@ -26,19 +28,26 @@ public class ViaCepService implements PostalCodeLookup {
         }
 
         try {
-            ViaCepResponse response = restClient.get()
-                    .uri("/{cep}/json", normalized)
-                    .retrieve()
-                    .body(ViaCepResponse.class);
+            ViaCepResponse response =
+                    restClient
+                            .get()
+                            .uri("/{cep}/json", normalized)
+                            .retrieve()
+                            .body(ViaCepResponse.class);
             if (response == null || Boolean.TRUE.equals(response.error())) {
                 throw new DomainException("ZIP_CODE_NOT_FOUND", "CEP nao encontrado.");
             }
-            return new PostalCodeResponse(normalized, response.logradouro(), response.bairro(),
-                    response.localidade(), response.uf());
+            return new PostalCodeResponse(
+                    normalized,
+                    response.logradouro(),
+                    response.bairro(),
+                    response.localidade(),
+                    response.uf());
         } catch (DomainException exception) {
             throw exception;
         } catch (RestClientException exception) {
-            throw new DomainException("POSTAL_CODE_PROVIDER_UNAVAILABLE",
+            throw new DomainException(
+                    "POSTAL_CODE_PROVIDER_UNAVAILABLE",
                     "Servico de CEP temporariamente indisponivel.");
         }
     }

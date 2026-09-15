@@ -11,4 +11,3 @@ public final class PostalCode {
         return normalize(value).matches("\\d{8}");
     }
 }
-

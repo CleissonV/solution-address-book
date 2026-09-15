@@ -73,7 +73,8 @@ public class UserEntity {
 
     protected UserEntity() {}
 
-    public UserEntity(String name, String cpf, LocalDate birthDate, String passwordHash, UserRole role) {
+    public UserEntity(
+            String name, String cpf, LocalDate birthDate, String passwordHash, UserRole role) {
         this.name = name;
         this.cpf = cpf;
         this.birthDate = birthDate;
@@ -88,8 +89,13 @@ public class UserEntity {
         this.role = role;
     }
 
-    public void markProfilePhotoChanged(long version) { this.profilePhotoVersion = version; }
-    public void clearProfilePhoto() { this.profilePhotoVersion = null; }
+    public void markProfilePhotoChanged(long version) {
+        this.profilePhotoVersion = version;
+    }
+
+    public void clearProfilePhoto() {
+        this.profilePhotoVersion = null;
+    }
 
     public void deactivate(UUID actorId, Instant occurredAt) {
         this.status = UserStatus.INACTIVE;
@@ -103,17 +109,55 @@ public class UserEntity {
         this.deactivatedBy = null;
     }
 
-    public UUID getId() { return id; }
-    public String getName() { return name; }
-    public String getCpf() { return cpf; }
-    public LocalDate getBirthDate() { return birthDate; }
-    public String getPasswordHash() { return passwordHash; }
-    public UserRole getRole() { return role; }
-    public Long getProfilePhotoVersion() { return profilePhotoVersion; }
-    public UserStatus getStatus() { return status; }
-    public Instant getDeactivatedAt() { return deactivatedAt; }
-    public UUID getDeactivatedBy() { return deactivatedBy; }
-    public boolean isActive() { return status == UserStatus.ACTIVE; }
-    public List<AddressEntity> getAddresses() { return addresses; }
-    public Instant getCreatedAt() { return createdAt; }
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public Long getProfilePhotoVersion() {
+        return profilePhotoVersion;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public Instant getDeactivatedAt() {
+        return deactivatedAt;
+    }
+
+    public UUID getDeactivatedBy() {
+        return deactivatedBy;
+    }
+
+    public boolean isActive() {
+        return status == UserStatus.ACTIVE;
+    }
+
+    public List<AddressEntity> getAddresses() {
+        return addresses;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }

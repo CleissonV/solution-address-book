@@ -37,6 +37,9 @@ jobs:
       - name: Instalar dependências
         working-directory: frontend
         run: npm ci
+      - name: Verificar qualidade e formatação
+        working-directory: frontend
+        run: npm run lint && npm run format:check
       - name: Testar interface
         working-directory: frontend
         run: npm test

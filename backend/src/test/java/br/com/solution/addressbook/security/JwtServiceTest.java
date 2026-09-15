@@ -14,7 +14,8 @@ class JwtServiceTest {
 
     @Test
     void issuedTokenCanBeValidatedByConfiguredIssuer() {
-        JwtService service = new JwtService(SECRET, Duration.ofHours(1), "solution-address-book-test");
+        JwtService service =
+                new JwtService(SECRET, Duration.ofHours(1), "solution-address-book-test");
         UUID id = UUID.randomUUID();
 
         String token = service.issue(new AuthenticatedUser(id, "52998224725", "hash", "ADMIN"));
@@ -25,8 +26,11 @@ class JwtServiceTest {
     @Test
     void tokenFromAnotherIssuerIsRejected() {
         JwtService issuer = new JwtService(SECRET, Duration.ofHours(1), "another-system");
-        JwtService verifier = new JwtService(SECRET, Duration.ofHours(1), "solution-address-book-test");
-        String token = issuer.issue(new AuthenticatedUser(UUID.randomUUID(), "52998224725", "hash", "ADMIN"));
+        JwtService verifier =
+                new JwtService(SECRET, Duration.ofHours(1), "solution-address-book-test");
+        String token =
+                issuer.issue(
+                        new AuthenticatedUser(UUID.randomUUID(), "52998224725", "hash", "ADMIN"));
 
         assertThatThrownBy(() -> verifier.subject(token)).isInstanceOf(JwtException.class);
     }

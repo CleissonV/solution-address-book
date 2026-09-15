@@ -39,17 +39,17 @@ Docker Compose cria PostgreSQL, executa migrações Flyway, compila backend e fr
 
 ## Entrega em resumo
 
-| Área | Implementação |
-|---|---|
-| Autenticação | Login por CPF, senha BCrypt e JWT stateless |
-| Autorização | Perfis `ADMIN` e `USER`, ownership validado no serviço e proteção contra IDOR |
-| Usuários | Cadastro, consulta, edição, nível de acesso, foto e desativação reversível |
-| Endereços | CRUD completo, endereço principal e promoção automática |
-| CEP | Consulta ViaCEP validada também no backend, com timeout e cache Caffeine |
-| Dados | PostgreSQL 17 local, Neon Postgres em produção, Flyway, UUID, constraints e índice único parcial |
-| Interface | React 19, TypeScript, React Query, shadcn/ui, Radix, CVA e layout responsivo |
-| Qualidade | 35 testes backend, 6 frontend e 2 jornadas E2E com Playwright |
-| Operação | Docker multi-stage, usuário não-root, healthchecks, CI e deploy full stack na Vercel |
+| Área         | Implementação                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------------ |
+| Autenticação | Login por CPF, senha BCrypt e JWT stateless                                                      |
+| Autorização  | Perfis `ADMIN` e `USER`, ownership validado no serviço e proteção contra IDOR                    |
+| Usuários     | Cadastro, consulta, edição, nível de acesso, foto e desativação reversível                       |
+| Endereços    | CRUD completo, endereço principal e promoção automática                                          |
+| CEP          | Consulta ViaCEP validada também no backend, com timeout e cache Caffeine                         |
+| Dados        | PostgreSQL 17 local, Neon Postgres em produção, Flyway, UUID, constraints e índice único parcial |
+| Interface    | React 19, TypeScript, React Query, shadcn/ui, Radix, CVA e layout responsivo                     |
+| Qualidade    | 35 testes backend, 6 frontend e 2 jornadas E2E com Playwright                                    |
+| Operação     | Docker multi-stage, usuário não-root, healthchecks, CI e deploy full stack na Vercel             |
 
 ## Requisitos e regras de negócio
 
@@ -137,16 +137,16 @@ Conteúdo binário fica em tabela separada. Usuário mantém somente metadado de
 
 ## Matriz de acesso
 
-| Operação | Admin | Usuário comum |
-|---|:---:|:---:|
-| Criar e listar usuários | Sim | Não |
-| Visualizar e editar outro usuário | Sim | Não |
-| Editar próprio cadastro | Sim | Sim |
-| Alterar nível de acesso | Sim | Não |
-| Desativar ou reativar conta | Sim | Não |
-| Visualizar foto acessível | Sim | Própria |
-| Alterar ou remover foto | Própria | Própria |
-| Gerenciar endereços acessíveis | Sim | Próprios |
+| Operação                          |  Admin  | Usuário comum |
+| --------------------------------- | :-----: | :-----------: |
+| Criar e listar usuários           |   Sim   |      Não      |
+| Visualizar e editar outro usuário |   Sim   |      Não      |
+| Editar próprio cadastro           |   Sim   |      Sim      |
+| Alterar nível de acesso           |   Sim   |      Não      |
+| Desativar ou reativar conta       |   Sim   |      Não      |
+| Visualizar foto acessível         |   Sim   |    Própria    |
+| Alterar ou remover foto           | Própria |    Própria    |
+| Gerenciar endereços acessíveis    |   Sim   |   Próprios    |
 
 ## Stack
 
@@ -195,23 +195,23 @@ Conteúdo binário fica em tabela separada. Usuário mantém somente metadado de
 
 ## API principal
 
-| Método | Rota | Acesso |
-|---|---|---|
-| `POST` | `/api/auth/login` | Público |
-| `POST` | `/api/users` | Admin |
-| `GET` | `/api/users` | Admin |
-| `GET` | `/api/users/me` | Autenticado |
-| `GET` | `/api/users/{id}` | Admin ou proprietário |
-| `PUT` | `/api/users/{id}` | Admin ou proprietário; papel somente admin |
-| `PATCH` | `/api/users/{id}/status` | Admin |
-| `GET` | `/api/users/{id}/photo` | Admin ou proprietário |
-| `PUT` | `/api/users/{id}/photo` | Proprietário |
-| `DELETE` | `/api/users/{id}/photo` | Proprietário |
-| `GET` | `/api/postal-codes/{cep}` | Autenticado |
-| `POST` | `/api/users/{id}/addresses` | Admin ou proprietário |
-| `PUT` | `/api/users/{id}/addresses/{addressId}` | Admin ou proprietário |
-| `PATCH` | `/api/users/{id}/addresses/{addressId}/primary` | Admin ou proprietário |
-| `DELETE` | `/api/users/{id}/addresses/{addressId}` | Admin ou proprietário |
+| Método   | Rota                                            | Acesso                                     |
+| -------- | ----------------------------------------------- | ------------------------------------------ |
+| `POST`   | `/api/auth/login`                               | Público                                    |
+| `POST`   | `/api/users`                                    | Admin                                      |
+| `GET`    | `/api/users`                                    | Admin                                      |
+| `GET`    | `/api/users/me`                                 | Autenticado                                |
+| `GET`    | `/api/users/{id}`                               | Admin ou proprietário                      |
+| `PUT`    | `/api/users/{id}`                               | Admin ou proprietário; papel somente admin |
+| `PATCH`  | `/api/users/{id}/status`                        | Admin                                      |
+| `GET`    | `/api/users/{id}/photo`                         | Admin ou proprietário                      |
+| `PUT`    | `/api/users/{id}/photo`                         | Proprietário                               |
+| `DELETE` | `/api/users/{id}/photo`                         | Proprietário                               |
+| `GET`    | `/api/postal-codes/{cep}`                       | Autenticado                                |
+| `POST`   | `/api/users/{id}/addresses`                     | Admin ou proprietário                      |
+| `PUT`    | `/api/users/{id}/addresses/{addressId}`         | Admin ou proprietário                      |
+| `PATCH`  | `/api/users/{id}/addresses/{addressId}/primary` | Admin ou proprietário                      |
+| `DELETE` | `/api/users/{id}/addresses/{addressId}`         | Admin ou proprietário                      |
 
 Erros seguem contrato previsível:
 
@@ -229,11 +229,11 @@ Erros seguem contrato previsível:
 
 Última validação local:
 
-| Suíte | Resultado | Cobertura funcional |
-|---|---:|---|
-| Backend | 23 aprovados | CPF, autenticação, usuários, autorização, status, fotos e endereços |
-| Frontend | 6 aprovados | Regras e utilitários de CPF |
-| E2E | 2 aprovados | Login, rotas, usuário, papéis, fotos, status e CRUD de endereço |
+| Suíte    |    Resultado | Cobertura funcional                                                 |
+| -------- | -----------: | ------------------------------------------------------------------- |
+| Backend  | 35 aprovados | CPF, autenticação, usuários, autorização, status, fotos e endereços |
+| Frontend |  6 aprovados | Regras e utilitários de CPF                                         |
+| E2E      |  2 aprovados | Login, rotas, usuário, papéis, fotos, status e CRUD de endereço     |
 
 ```bash
 # Backend
@@ -243,6 +243,8 @@ mvn test
 # Frontend
 cd frontend
 npm ci
+npm run lint
+npm run format:check
 npm test
 npm run build
 
@@ -251,6 +253,16 @@ npm run test:e2e
 ```
 
 Pipeline em `.github/workflows/ci.yml` repete build e testes em cada push ou pull request.
+
+### Formatação automática
+
+O frontend usa Prettier para TS, TSX, CSS, JSON e Markdown; ESLint para qualidade de código; e EditorConfig para manter indentação consistente entre IDEs. O backend usa Spotless com Google Java Format no padrão AOSP de 4 espaços.
+
+- VS Code: configurações em `.vscode/settings.json` formatam e aplicam correções do ESLint ao salvar. Extensões recomendadas aparecem ao abrir o projeto.
+- IntelliJ IDEA: habilite `Prettier > Run on save` e `ESLint > Run eslint --fix on save`; para Java, instale o plugin Google Java Format, selecione AOSP e ative a reformatação ao salvar. O arquivo `.editorconfig` é detectado automaticamente.
+- Validação completa local: execute `npm run check` dentro de `frontend`.
+- Formatação Java: execute `mvn spotless:apply` dentro de `backend`; `mvn verify` confere o padrão.
+- CI: rejeita código fora do padrão com `npm run lint` e `npm run format:check`.
 
 ## Desenvolvimento sem Docker
 
@@ -277,17 +289,17 @@ Workflow `pages.yml` permanece como demonstração estática e contingência do 
 
 ## Variáveis de ambiente
 
-| Variável | Finalidade |
-|---|---|
-| `SPRING_DATASOURCE_URL` ou `PGHOST` + `PGDATABASE` | Conexão PostgreSQL |
-| `SPRING_DATASOURCE_USERNAME` ou `PGUSER` | Usuário do banco |
-| `SPRING_DATASOURCE_PASSWORD` ou `PGPASSWORD` | Senha do banco |
-| `APP_JWT_SECRET` ou `JWT_SECRET` | Chave de assinatura JWT |
-| `APP_ADMIN_CPF` ou `ADMIN_CPF` | CPF do administrador inicial |
-| `APP_ADMIN_PASSWORD` ou `ADMIN_PASSWORD` | Senha do administrador inicial |
-| `APP_CORS_ALLOWED_ORIGINS` | Origens aceitas pela API |
-| `VITE_API_URL` | URL pública da API usada pelo frontend |
-| `PORT` | Porta HTTP fornecida pela plataforma |
+| Variável                                           | Finalidade                             |
+| -------------------------------------------------- | -------------------------------------- |
+| `SPRING_DATASOURCE_URL` ou `PGHOST` + `PGDATABASE` | Conexão PostgreSQL                     |
+| `SPRING_DATASOURCE_USERNAME` ou `PGUSER`           | Usuário do banco                       |
+| `SPRING_DATASOURCE_PASSWORD` ou `PGPASSWORD`       | Senha do banco                         |
+| `APP_JWT_SECRET` ou `JWT_SECRET`                   | Chave de assinatura JWT                |
+| `APP_ADMIN_CPF` ou `ADMIN_CPF`                     | CPF do administrador inicial           |
+| `APP_ADMIN_PASSWORD` ou `ADMIN_PASSWORD`           | Senha do administrador inicial         |
+| `APP_CORS_ALLOWED_ORIGINS`                         | Origens aceitas pela API               |
+| `VITE_API_URL`                                     | URL pública da API usada pelo frontend |
+| `PORT`                                             | Porta HTTP fornecida pela plataforma   |
 
 ## Identidade visual
 

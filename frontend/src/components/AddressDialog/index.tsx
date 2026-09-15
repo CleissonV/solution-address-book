@@ -1,96 +1,194 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { CheckCircle2, MapPin, Plus } from 'lucide-react'
-import { lookupPostalCode, useCreateAddress, useUpdateAddress } from '@/features/users/api'
-import { formatZipCode, getErrorMessage } from '@/lib/utils'
-import type { Address, PostalCode } from '@/types'
-import { Button } from '@/components/ui/button'
-import { Dialog } from '@/components/ui/dialog'
-import { Alert, Spinner } from '@/components/ui/feedback'
-import { Input } from '@/components/ui/input'
-import formStyles from '@/components/ui/form.module.css'
-import styles from './styles.module.css'
+import { useEffect, useState, type FormEvent } from 'react';
+import { CheckCircle2, MapPin, Plus } from 'lucide-react';
+import { lookupPostalCode, useCreateAddress, useUpdateAddress } from '@/features/users/api';
+import { formatZipCode, getErrorMessage } from '@/lib/utils';
+import type { Address, PostalCode } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Dialog } from '@/components/ui/dialog';
+import { Alert, Spinner } from '@/components/ui/feedback';
+import { Input } from '@/components/ui/input';
+import formStyles from '@/components/ui/form.module.css';
+import styles from './styles.module.css';
 
 interface AddressDialogProps {
-  userId: string
-  address?: Address
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
+  userId: string;
+  address?: Address;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-const emptyForm = { zipCode: '', number: '', complement: '', primary: false }
+const emptyForm = { zipCode: '', number: '', complement: '', primary: false };
 
-export function AddressDialog({ userId, address, open: controlledOpen, onOpenChange }: AddressDialogProps) {
-  const [internalOpen, setInternalOpen] = useState(false)
-  const open = controlledOpen ?? internalOpen
-  const setOpen = onOpenChange ?? setInternalOpen
-  const [form, setForm] = useState(emptyForm)
-  const [postalCode, setPostalCode] = useState<PostalCode | null>(null)
-  const [lookupLoading, setLookupLoading] = useState(false)
-  const [error, setError] = useState('')
-  const createMutation = useCreateAddress(userId)
-  const updateMutation = useUpdateAddress(userId, address?.id ?? '')
-  const mutation = address ? updateMutation : createMutation
+export function AddressDialog({
+  userId,
+  address,
+  open: controlledOpen,
+  onOpenChange,
+}: AddressDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
+  const [form, setForm] = useState(emptyForm);
+  const [postalCode, setPostalCode] = useState<PostalCode | null>(null);
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [error, setError] = useState('');
+  const createMutation = useCreateAddress(userId);
+  const updateMutation = useUpdateAddress(userId, address?.id ?? '');
+  const mutation = address ? updateMutation : createMutation;
 
   useEffect(() => {
-    if (!open) return
-    setForm(address ? { zipCode: formatZipCode(address.zipCode), number: address.number, complement: address.complement ?? '', primary: address.primary } : emptyForm)
-    setPostalCode(address ? { zipCode: address.zipCode, street: address.street, neighborhood: address.neighborhood, city: address.city, state: address.state } : null)
-    setError('')
-  }, [address, open])
+    if (!open) return;
+    setForm(
+      address
+        ? {
+            zipCode: formatZipCode(address.zipCode),
+            number: address.number,
+            complement: address.complement ?? '',
+            primary: address.primary,
+          }
+        : emptyForm,
+    );
+    setPostalCode(
+      address
+        ? {
+            zipCode: address.zipCode,
+            street: address.street,
+            neighborhood: address.neighborhood,
+            city: address.city,
+            state: address.state,
+          }
+        : null,
+    );
+    setError('');
+  }, [address, open]);
 
   async function searchZipCode() {
-    const clean = form.zipCode.replace(/\D/g, '')
+    const clean = form.zipCode.replace(/\D/g, '');
     if (clean.length !== 8) {
-      setPostalCode(null)
-      if (clean.length > 0) setError('Informe um CEP com 8 dígitos.')
-      return
+      setPostalCode(null);
+      if (clean.length > 0) setError('Informe um CEP com 8 dígitos.');
+      return;
     }
-    setLookupLoading(true)
-    setError('')
+    setLookupLoading(true);
+    setError('');
     try {
-      setPostalCode(await lookupPostalCode(clean))
+      setPostalCode(await lookupPostalCode(clean));
     } catch (exception) {
-      setPostalCode(null)
-      setError(getErrorMessage(exception))
+      setPostalCode(null);
+      setError(getErrorMessage(exception));
     } finally {
-      setLookupLoading(false)
+      setLookupLoading(false);
     }
   }
 
   async function submit(event: FormEvent) {
-    event.preventDefault()
-    setError('')
+    event.preventDefault();
+    setError('');
     if (!postalCode) {
-      setError('Consulte um CEP válido antes de salvar.')
-      return
+      setError('Consulte um CEP válido antes de salvar.');
+      return;
     }
     try {
-      await mutation.mutateAsync({ ...form, zipCode: form.zipCode.replace(/\D/g, '') })
-      setOpen(false)
+      await mutation.mutateAsync({ ...form, zipCode: form.zipCode.replace(/\D/g, '') });
+      setOpen(false);
     } catch (exception) {
-      setError(getErrorMessage(exception))
+      setError(getErrorMessage(exception));
     }
   }
 
   return (
     <>
-      {controlledOpen === undefined && <Button onClick={() => setOpen(true)}><Plus size={18} />Novo endereço</Button>}
-      <Dialog open={open} onOpenChange={setOpen} title={address ? 'Editar endereço' : 'Novo endereço'}
+      {controlledOpen === undefined && (
+        <Button onClick={() => setOpen(true)}>
+          <Plus size={18} />
+          Novo endereço
+        </Button>
+      )}
+      <Dialog
+        open={open}
+        onOpenChange={setOpen}
+        title={address ? 'Editar endereço' : 'Novo endereço'}
         description="Informe o CEP para preencher automaticamente os dados."
-        footer={<><Button variant="secondary" onClick={() => setOpen(false)}>Cancelar</Button><Button type="submit" form="address-form" disabled={mutation.isPending || lookupLoading}>{mutation.isPending ? 'Salvando...' : 'Salvar endereço'}</Button></>}>
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              form="address-form"
+              disabled={mutation.isPending || lookupLoading}
+            >
+              {mutation.isPending ? 'Salvando...' : 'Salvar endereço'}
+            </Button>
+          </>
+        }
+      >
         <form id="address-form" className={formStyles.grid} onSubmit={submit}>
           {error && <Alert className={formStyles.full}>{error}</Alert>}
           <div className={styles.zipField}>
-            <Input label="CEP" name="zipCode" inputMode="numeric" placeholder="00000-000" value={form.zipCode}
-              onChange={(e) => { setForm({ ...form, zipCode: formatZipCode(e.target.value) }); setPostalCode(null) }} onBlur={searchZipCode} required />
-            <span className={styles.zipStatus}>{lookupLoading ? <Spinner /> : postalCode ? <CheckCircle2 size={18} /> : null}</span>
+            <Input
+              label="CEP"
+              name="zipCode"
+              inputMode="numeric"
+              placeholder="00000-000"
+              value={form.zipCode}
+              onChange={(e) => {
+                setForm({ ...form, zipCode: formatZipCode(e.target.value) });
+                setPostalCode(null);
+              }}
+              onBlur={searchZipCode}
+              required
+            />
+            <span className={styles.zipStatus}>
+              {lookupLoading ? <Spinner /> : postalCode ? <CheckCircle2 size={18} /> : null}
+            </span>
           </div>
-          <Input label="Número" name="number" placeholder="Ex.: 300" maxLength={20} value={form.number} onChange={(e) => setForm({ ...form, number: e.target.value })} required />
-          <Input fieldClassName={formStyles.full} label="Complemento" name="complement" placeholder="Sala, bloco ou referência (opcional)" maxLength={120} value={form.complement} onChange={(e) => setForm({ ...form, complement: e.target.value })} />
-          {postalCode && <div className={`${styles.postalPreview} ${formStyles.full}`} data-testid="postal-preview"><MapPin size={20} /><div><strong>{postalCode.street}</strong><span>{postalCode.neighborhood} · {postalCode.city}/{postalCode.state}</span></div></div>}
-          <label className={`${styles.checkField} ${formStyles.full}`}><input type="checkbox" checked={form.primary} onChange={(e) => setForm({ ...form, primary: e.target.checked })} /><span><strong>Endereço principal</strong><small>Usado como referência padrão para este usuário.</small></span></label>
+          <Input
+            label="Número"
+            name="number"
+            placeholder="Ex.: 300"
+            maxLength={20}
+            value={form.number}
+            onChange={(e) => setForm({ ...form, number: e.target.value })}
+            required
+          />
+          <Input
+            fieldClassName={formStyles.full}
+            label="Complemento"
+            name="complement"
+            placeholder="Sala, bloco ou referência (opcional)"
+            maxLength={120}
+            value={form.complement}
+            onChange={(e) => setForm({ ...form, complement: e.target.value })}
+          />
+          {postalCode && (
+            <div
+              className={`${styles.postalPreview} ${formStyles.full}`}
+              data-testid="postal-preview"
+            >
+              <MapPin size={20} />
+              <div>
+                <strong>{postalCode.street}</strong>
+                <span>
+                  {postalCode.neighborhood} · {postalCode.city}/{postalCode.state}
+                </span>
+              </div>
+            </div>
+          )}
+          <label className={`${styles.checkField} ${formStyles.full}`}>
+            <input
+              type="checkbox"
+              checked={form.primary}
+              onChange={(e) => setForm({ ...form, primary: e.target.checked })}
+            />
+            <span>
+              <strong>Endereço principal</strong>
+              <small>Usado como referência padrão para este usuário.</small>
+            </span>
+          </label>
         </form>
       </Dialog>
     </>
-  )
+  );
 }

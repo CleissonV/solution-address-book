@@ -18,4 +18,3 @@ class CpfTest {
         assertThat(Cpf.isValid(cpf)).isFalse();
     }
 }
-

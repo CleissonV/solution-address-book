@@ -1,7 +1,7 @@
-import { configDefaults, defineConfig } from 'vitest/config'
-import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react'
-import { fileURLToPath, URL } from 'node:url'
+import { configDefaults, defineConfig } from 'vitest/config';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
   base: process.env.VITE_BASE_PATH ?? '/',
@@ -21,4 +21,4 @@ export default defineConfig({
     environment: 'node',
     exclude: [...configDefaults.exclude, 'e2e/**'],
   },
-})
+});

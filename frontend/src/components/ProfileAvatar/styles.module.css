@@ -1,6 +1,17 @@
-.large { height: 44px; width: 44px; }
-.xl { border-radius: 18px; font-size: 28px; height: 78px; width: 78px; }
+.large {
+  height: 44px;
+  width: 44px;
+}
+.xl {
+  border-radius: 18px;
+  font-size: 28px;
+  height: 78px;
+  width: 78px;
+}
 
 @media (max-width: 680px) {
-  .xl { height: 58px; width: 58px; }
+  .xl {
+    height: 58px;
+    width: 58px;
+  }
 }

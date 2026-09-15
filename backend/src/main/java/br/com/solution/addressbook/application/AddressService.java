@@ -20,15 +20,18 @@ public class AddressService {
     private final UserService userService;
     private final PostalCodeLookup postalCodeLookup;
 
-    public AddressService(AddressRepository addressRepository, UserService userService,
-                          PostalCodeLookup postalCodeLookup) {
+    public AddressService(
+            AddressRepository addressRepository,
+            UserService userService,
+            PostalCodeLookup postalCodeLookup) {
         this.addressRepository = addressRepository;
         this.userService = userService;
         this.postalCodeLookup = postalCodeLookup;
     }
 
     @Transactional
-    public AddressResponse create(UUID userId, UpsertAddressRequest request, AuthenticatedUser actor) {
+    public AddressResponse create(
+            UUID userId, UpsertAddressRequest request, AuthenticatedUser actor) {
         UserEntity user = userService.requireAccessible(userId, actor);
         PostalCodeResponse postalCode = postalCodeLookup.lookup(request.zipCode());
         List<AddressEntity> addresses = addressRepository.findAllForUpdate(userId);
@@ -37,27 +40,42 @@ public class AddressService {
             demoteAll(addresses);
             addressRepository.flush();
         }
-        AddressEntity address = new AddressEntity(user, postalCode.zipCode(), request.number().trim(),
-                trimToNull(request.complement()), postalCode.street(), postalCode.neighborhood(),
-                postalCode.city(), postalCode.state(), primary);
+        AddressEntity address =
+                new AddressEntity(
+                        user,
+                        postalCode.zipCode(),
+                        request.number().trim(),
+                        trimToNull(request.complement()),
+                        postalCode.street(),
+                        postalCode.neighborhood(),
+                        postalCode.city(),
+                        postalCode.state(),
+                        primary);
         return UserMapper.toAddress(addressRepository.save(address));
     }
 
     @Transactional
-    public AddressResponse update(UUID userId, UUID addressId, UpsertAddressRequest request,
-                                  AuthenticatedUser actor) {
+    public AddressResponse update(
+            UUID userId, UUID addressId, UpsertAddressRequest request, AuthenticatedUser actor) {
         userService.requireAccessible(userId, actor);
         PostalCodeResponse postalCode = postalCodeLookup.lookup(request.zipCode());
         List<AddressEntity> addresses = addressRepository.findAllForUpdate(userId);
         AddressEntity address = findIn(addresses, addressId);
-        address.update(postalCode.zipCode(), request.number().trim(), trimToNull(request.complement()),
-                postalCode.street(), postalCode.neighborhood(), postalCode.city(), postalCode.state());
+        address.update(
+                postalCode.zipCode(),
+                request.number().trim(),
+                trimToNull(request.complement()),
+                postalCode.street(),
+                postalCode.neighborhood(),
+                postalCode.city(),
+                postalCode.state());
         if (request.primary()) {
             demoteAll(addresses);
             addressRepository.flush();
             address.setPrimary(true);
         } else if (address.isPrimary() && addresses.size() > 1) {
-            throw new DomainException("PRIMARY_ADDRESS_REQUIRED",
+            throw new DomainException(
+                    "PRIMARY_ADDRESS_REQUIRED",
                     "Defina outro endereco principal antes de remover esta marcacao.");
         }
         return UserMapper.toAddress(addressRepository.save(address));
@@ -83,15 +101,19 @@ public class AddressService {
         addressRepository.delete(target);
         if (wasPrimary) {
             addressRepository.flush();
-            addresses.stream().filter(address -> !address.getId().equals(addressId)).findFirst()
+            addresses.stream()
+                    .filter(address -> !address.getId().equals(addressId))
+                    .findFirst()
                     .ifPresent(address -> address.setPrimary(true));
         }
     }
 
     private static AddressEntity findIn(List<AddressEntity> addresses, UUID id) {
-        return addresses.stream().filter(address -> address.getId().equals(id)).findFirst()
-                .orElseThrow(() -> new DomainException("ADDRESS_NOT_FOUND",
-                        "Endereco nao encontrado."));
+        return addresses.stream()
+                .filter(address -> address.getId().equals(id))
+                .findFirst()
+                .orElseThrow(
+                        () -> new DomainException("ADDRESS_NOT_FOUND", "Endereco nao encontrado."));
     }
 
     private static void demoteAll(List<AddressEntity> addresses) {

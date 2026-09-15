@@ -17,11 +17,13 @@ class SecurityErrorWriter {
         this.objectMapper = objectMapper;
     }
 
-    void write(HttpServletResponse response, HttpStatus status, String code, String message) throws IOException {
+    void write(HttpServletResponse response, HttpStatus status, String code, String message)
+            throws IOException {
         response.setStatus(status.value());
         response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        objectMapper.writeValue(response.getOutputStream(),
+        objectMapper.writeValue(
+                response.getOutputStream(),
                 new ApiError(Instant.now(), status.value(), code, message, null));
     }
 }

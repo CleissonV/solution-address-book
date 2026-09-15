@@ -19,15 +19,13 @@ public final class UserDtos {
             @NotBlank @Size(max = 14) String cpf,
             @NotNull @Past LocalDate birthDate,
             @NotBlank @Size(min = 8, max = 72) String password,
-            @NotNull UserRole role
-    ) {}
+            @NotNull UserRole role) {}
 
     public record UpdateUserRequest(
             @NotBlank @Size(max = 160) String name,
             @NotBlank @Size(max = 14) String cpf,
             @NotNull @Past LocalDate birthDate,
-            UserRole role
-    ) {}
+            UserRole role) {}
 
     public record UpdateUserStatusRequest(@NotNull UserStatus status) {}
 
@@ -40,8 +38,7 @@ public final class UserDtos {
             Long profilePhotoVersion,
             UserStatus status,
             Instant deactivatedAt,
-            List<AddressDtos.AddressResponse> addresses
-    ) {}
+            List<AddressDtos.AddressResponse> addresses) {}
 
     public record ProfilePhotoResponse(long version) {}
 }

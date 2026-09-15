@@ -1,4 +1,27 @@
-.avatar { align-items: center; background: var(--brand); border-radius: 10px; color: white; display: inline-flex; flex: 0 0 auto; font-weight: 800; height: 38px; justify-content: center; overflow: hidden; position: relative; width: 38px; }
-.image, .fallback { height: 100%; width: 100%; }
-.image { object-fit: cover; }
-.fallback { align-items: center; display: flex; justify-content: center; }
+.avatar {
+  align-items: center;
+  background: var(--brand);
+  border-radius: 10px;
+  color: white;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-weight: 800;
+  height: 38px;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  width: 38px;
+}
+.image,
+.fallback {
+  height: 100%;
+  width: 100%;
+}
+.image {
+  object-fit: cover;
+}
+.fallback {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}

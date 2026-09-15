@@ -27,4 +27,3 @@ public final class Cpf {
         return result >= 10 ? 0 : result;
     }
 }
-

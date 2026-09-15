@@ -7,10 +7,10 @@ import br.com.solution.addressbook.shared.Cpf;
 import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +23,12 @@ public class AdminSeeder implements ApplicationRunner {
     private final String cpf;
     private final String password;
 
-    public AdminSeeder(UserRepository repository, PasswordEncoder encoder,
-                       @Value("${app.admin.name}") String name,
-                       @Value("${app.admin.cpf}") String cpf,
-                       @Value("${app.admin.password}") String password) {
+    public AdminSeeder(
+            UserRepository repository,
+            PasswordEncoder encoder,
+            @Value("${app.admin.name}") String name,
+            @Value("${app.admin.cpf}") String cpf,
+            @Value("${app.admin.password}") String password) {
         this.repository = repository;
         this.encoder = encoder;
         this.name = name;
@@ -40,8 +42,13 @@ public class AdminSeeder implements ApplicationRunner {
         if (repository.existsByCpf(cpf)) return;
 
         try {
-            repository.saveAndFlush(new UserEntity(name, cpf, LocalDate.of(1990, 1, 1),
-                    encoder.encode(password), UserRole.ADMIN));
+            repository.saveAndFlush(
+                    new UserEntity(
+                            name,
+                            cpf,
+                            LocalDate.of(1990, 1, 1),
+                            encoder.encode(password),
+                            UserRole.ADMIN));
             log.info("Initial administrator created");
         } catch (DataIntegrityViolationException exception) {
             if (!repository.existsByCpf(cpf)) throw exception;
@@ -54,7 +61,8 @@ public class AdminSeeder implements ApplicationRunner {
             throw new IllegalStateException("APP_ADMIN_CPF must contain a valid CPF");
         }
         if (password == null || password.length() < 8 || password.length() > 72) {
-            throw new IllegalStateException("APP_ADMIN_PASSWORD must contain between 8 and 72 characters");
+            throw new IllegalStateException(
+                    "APP_ADMIN_PASSWORD must contain between 8 and 72 characters");
         }
     }
 }

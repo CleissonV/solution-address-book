@@ -13,8 +13,8 @@ import br.com.solution.addressbook.domain.user.ProfilePhotoRepository;
 import br.com.solution.addressbook.domain.user.UserEntity;
 import br.com.solution.addressbook.domain.user.UserRole;
 import br.com.solution.addressbook.security.AuthenticatedUser;
-import java.time.LocalDate;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,8 +43,11 @@ class ProfilePhotoServiceTest {
         when(userService.requireAccessible(userId, actor(userId))).thenReturn(user);
         when(photoRepository.findById(userId)).thenReturn(Optional.empty());
 
-        var result = service.upload(userId,
-                new MockMultipartFile("file", "profile.png", "text/plain", png), actor(userId));
+        var result =
+                service.upload(
+                        userId,
+                        new MockMultipartFile("file", "profile.png", "text/plain", png),
+                        actor(userId));
 
         assertThat(result.version()).isPositive();
         assertThat(user.getProfilePhotoVersion()).isEqualTo(result.version());
@@ -56,11 +59,21 @@ class ProfilePhotoServiceTest {
         UUID userId = UUID.randomUUID();
         when(userService.requireAccessible(userId, actor(userId))).thenReturn(user());
 
-        assertThatThrownBy(() -> service.upload(userId,
-                new MockMultipartFile("file", "fake.png", "image/png", "not-an-image".getBytes()), actor(userId)))
-                .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getCode()).isEqualTo("INVALID_PHOTO_TYPE");
-                });
+        assertThatThrownBy(
+                        () ->
+                                service.upload(
+                                        userId,
+                                        new MockMultipartFile(
+                                                "file",
+                                                "fake.png",
+                                                "image/png",
+                                                "not-an-image".getBytes()),
+                                        actor(userId)))
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception -> {
+                            assertThat(exception.getCode()).isEqualTo("INVALID_PHOTO_TYPE");
+                        });
     }
 
     @Test
@@ -68,12 +81,21 @@ class ProfilePhotoServiceTest {
         UUID userId = UUID.randomUUID();
         when(userService.requireAccessible(userId, actor(userId))).thenReturn(user());
 
-        assertThatThrownBy(() -> service.upload(userId,
-                new MockMultipartFile("file", "large.png", "image/png",
-                        new byte[ProfilePhotoService.MAX_PHOTO_SIZE + 1]), actor(userId)))
-                .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getCode()).isEqualTo("PHOTO_TOO_LARGE");
-                });
+        assertThatThrownBy(
+                        () ->
+                                service.upload(
+                                        userId,
+                                        new MockMultipartFile(
+                                                "file",
+                                                "large.png",
+                                                "image/png",
+                                                new byte[ProfilePhotoService.MAX_PHOTO_SIZE + 1]),
+                                        actor(userId)))
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception -> {
+                            assertThat(exception.getCode()).isEqualTo("PHOTO_TOO_LARGE");
+                        });
     }
 
     @Test
@@ -95,12 +117,21 @@ class ProfilePhotoServiceTest {
         UUID userId = UUID.randomUUID();
         AuthenticatedUser administrator = actor(UUID.randomUUID(), UserRole.ADMIN);
 
-        assertThatThrownBy(() -> service.upload(userId,
-                new MockMultipartFile("file", "profile.png", "image/png", new byte[] {(byte) 0x89}),
-                administrator))
-                .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getCode()).isEqualTo("PROFILE_PHOTO_SELF_ONLY");
-                });
+        assertThatThrownBy(
+                        () ->
+                                service.upload(
+                                        userId,
+                                        new MockMultipartFile(
+                                                "file",
+                                                "profile.png",
+                                                "image/png",
+                                                new byte[] {(byte) 0x89}),
+                                        administrator))
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception -> {
+                            assertThat(exception.getCode()).isEqualTo("PROFILE_PHOTO_SELF_ONLY");
+                        });
 
         verifyNoInteractions(userService, photoRepository);
     }
@@ -111,15 +142,18 @@ class ProfilePhotoServiceTest {
         AuthenticatedUser administrator = actor(UUID.randomUUID(), UserRole.ADMIN);
 
         assertThatThrownBy(() -> service.delete(userId, administrator))
-                .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getCode()).isEqualTo("PROFILE_PHOTO_SELF_ONLY");
-                });
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception -> {
+                            assertThat(exception.getCode()).isEqualTo("PROFILE_PHOTO_SELF_ONLY");
+                        });
 
         verifyNoInteractions(userService, photoRepository);
     }
 
     private static UserEntity user() {
-        return new UserEntity("Usuario", "39053344705", LocalDate.of(1990, 1, 1), "hash", UserRole.USER);
+        return new UserEntity(
+                "Usuario", "39053344705", LocalDate.of(1990, 1, 1), "hash", UserRole.USER);
     }
 
     private static AuthenticatedUser actor(UUID id) {

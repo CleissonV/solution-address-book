@@ -37,16 +37,19 @@ class AuthServiceTest {
 
     @Test
     void inactiveAccountCannotLogin() {
-        UserEntity user = new UserEntity("Usuario", "39053344705", LocalDate.of(1990, 1, 1),
-                "hash", UserRole.USER);
+        UserEntity user =
+                new UserEntity(
+                        "Usuario", "39053344705", LocalDate.of(1990, 1, 1), "hash", UserRole.USER);
         user.deactivate(UUID.randomUUID(), Instant.now());
         when(userRepository.findByCpf("39053344705")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("Password@123", "hash")).thenReturn(true);
 
         assertThatThrownBy(() -> service.login(new LoginRequest("39053344705", "Password@123")))
-                .isInstanceOfSatisfying(DomainException.class, exception -> {
-                    assertThat(exception.getCode()).isEqualTo("ACCOUNT_INACTIVE");
-                });
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception -> {
+                            assertThat(exception.getCode()).isEqualTo("ACCOUNT_INACTIVE");
+                        });
     }
 
     @Test
@@ -68,8 +71,10 @@ class AuthServiceTest {
         when(passwordEncoder.matches("WrongPassword", "hash")).thenReturn(false);
 
         assertThatThrownBy(() -> service.login(new LoginRequest("39053344705", "WrongPassword")))
-                .isInstanceOfSatisfying(DomainException.class,
-                        exception -> assertThat(exception.getCode()).isEqualTo("INVALID_CREDENTIALS"));
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception ->
+                                assertThat(exception.getCode()).isEqualTo("INVALID_CREDENTIALS"));
         verifyNoInteractions(jwtService);
     }
 
@@ -78,13 +83,15 @@ class AuthServiceTest {
         when(userRepository.findByCpf("39053344705")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.login(new LoginRequest("39053344705", "Password@123")))
-                .isInstanceOfSatisfying(DomainException.class,
-                        exception -> assertThat(exception.getCode()).isEqualTo("INVALID_CREDENTIALS"));
+                .isInstanceOfSatisfying(
+                        DomainException.class,
+                        exception ->
+                                assertThat(exception.getCode()).isEqualTo("INVALID_CREDENTIALS"));
         verifyNoInteractions(passwordEncoder, jwtService);
     }
 
     private static UserEntity user() {
-        return new UserEntity("Usuario", "39053344705", LocalDate.of(1990, 1, 1),
-                "hash", UserRole.USER);
+        return new UserEntity(
+                "Usuario", "39053344705", LocalDate.of(1990, 1, 1), "hash", UserRole.USER);
     }
 }

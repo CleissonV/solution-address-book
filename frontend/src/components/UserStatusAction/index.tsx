@@ -1,9 +1,9 @@
-import { RotateCcw, UserX } from 'lucide-react'
-import { useState } from 'react'
-import { useUpdateUserStatus } from '@/features/users/api'
-import { getErrorMessage } from '@/lib/utils'
-import type { UserDetails } from '@/types'
-import { Alert } from '@/components/ui/feedback'
+import { RotateCcw, UserX } from 'lucide-react';
+import { useState } from 'react';
+import { useUpdateUserStatus } from '@/features/users/api';
+import { getErrorMessage } from '@/lib/utils';
+import type { UserDetails } from '@/types';
+import { Alert } from '@/components/ui/feedback';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,27 +14,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import styles from './styles.module.css'
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import styles from './styles.module.css';
 
 interface UserStatusActionProps {
-  user: UserDetails
+  user: UserDetails;
 }
 
 export function UserStatusAction({ user }: UserStatusActionProps) {
-  const [open, setOpen] = useState(false)
-  const [error, setError] = useState('')
-  const mutation = useUpdateUserStatus(user.id)
-  const active = user.status === 'ACTIVE'
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState('');
+  const mutation = useUpdateUserStatus(user.id);
+  const active = user.status === 'ACTIVE';
 
   async function updateStatus() {
-    setError('')
+    setError('');
     try {
-      await mutation.mutateAsync(active ? 'INACTIVE' : 'ACTIVE')
-      setOpen(false)
+      await mutation.mutateAsync(active ? 'INACTIVE' : 'ACTIVE');
+      setOpen(false);
     } catch (exception) {
-      setError(getErrorMessage(exception))
+      setError(getErrorMessage(exception));
     }
   }
 
@@ -62,7 +62,10 @@ export function UserStatusAction({ user }: UserStatusActionProps) {
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             variant={active ? 'danger' : 'primary'}
-            onClick={(event) => { event.preventDefault(); void updateStatus() }}
+            onClick={(event) => {
+              event.preventDefault();
+              void updateStatus();
+            }}
             disabled={mutation.isPending}
           >
             {mutation.isPending ? 'Salvando...' : active ? 'Desativar conta' : 'Reativar conta'}
@@ -70,5 +73,5 @@ export function UserStatusAction({ user }: UserStatusActionProps) {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

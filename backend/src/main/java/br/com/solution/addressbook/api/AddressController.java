@@ -1,8 +1,8 @@
 package br.com.solution.addressbook.api;
 
+import br.com.solution.addressbook.application.AddressService;
 import br.com.solution.addressbook.application.dto.AddressDtos.AddressResponse;
 import br.com.solution.addressbook.application.dto.AddressDtos.UpsertAddressRequest;
-import br.com.solution.addressbook.application.AddressService;
 import br.com.solution.addressbook.security.AuthenticatedUser;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -23,33 +23,43 @@ import org.springframework.web.bind.annotation.RestController;
 public class AddressController {
     private final AddressService addressService;
 
-    public AddressController(AddressService addressService) { this.addressService = addressService; }
+    public AddressController(AddressService addressService) {
+        this.addressService = addressService;
+    }
 
     @PostMapping
-    ResponseEntity<AddressResponse> create(@PathVariable UUID userId,
-                                           @Valid @RequestBody UpsertAddressRequest request,
-                                           @AuthenticationPrincipal AuthenticatedUser actor) {
+    ResponseEntity<AddressResponse> create(
+            @PathVariable UUID userId,
+            @Valid @RequestBody UpsertAddressRequest request,
+            @AuthenticationPrincipal AuthenticatedUser actor) {
         AddressResponse created = addressService.create(userId, request, actor);
-        return ResponseEntity.created(URI.create("/api/users/" + userId + "/addresses/" + created.id()))
+        return ResponseEntity.created(
+                        URI.create("/api/users/" + userId + "/addresses/" + created.id()))
                 .body(created);
     }
 
     @PutMapping("/{addressId}")
-    ResponseEntity<AddressResponse> update(@PathVariable UUID userId, @PathVariable UUID addressId,
-                                           @Valid @RequestBody UpsertAddressRequest request,
-                                           @AuthenticationPrincipal AuthenticatedUser actor) {
+    ResponseEntity<AddressResponse> update(
+            @PathVariable UUID userId,
+            @PathVariable UUID addressId,
+            @Valid @RequestBody UpsertAddressRequest request,
+            @AuthenticationPrincipal AuthenticatedUser actor) {
         return ResponseEntity.ok(addressService.update(userId, addressId, request, actor));
     }
 
     @PatchMapping("/{addressId}/primary")
-    ResponseEntity<AddressResponse> setPrimary(@PathVariable UUID userId, @PathVariable UUID addressId,
-                                               @AuthenticationPrincipal AuthenticatedUser actor) {
+    ResponseEntity<AddressResponse> setPrimary(
+            @PathVariable UUID userId,
+            @PathVariable UUID addressId,
+            @AuthenticationPrincipal AuthenticatedUser actor) {
         return ResponseEntity.ok(addressService.setPrimary(userId, addressId, actor));
     }
 
     @DeleteMapping("/{addressId}")
-    ResponseEntity<Void> delete(@PathVariable UUID userId, @PathVariable UUID addressId,
-                                @AuthenticationPrincipal AuthenticatedUser actor) {
+    ResponseEntity<Void> delete(
+            @PathVariable UUID userId,
+            @PathVariable UUID addressId,
+            @AuthenticationPrincipal AuthenticatedUser actor) {
         addressService.delete(userId, addressId, actor);
         return ResponseEntity.noContent().build();
     }

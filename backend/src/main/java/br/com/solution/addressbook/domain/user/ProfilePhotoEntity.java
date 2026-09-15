@@ -40,9 +40,23 @@ public class ProfilePhotoEntity {
         this.updatedAt = updatedAt;
     }
 
-    public UUID getUserId() { return userId; }
-    public String getContentType() { return contentType; }
-    public byte[] getContent() { return content.clone(); }
-    public int getSizeBytes() { return sizeBytes; }
-    public Instant getUpdatedAt() { return updatedAt; }
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public byte[] getContent() {
+        return content.clone();
+    }
+
+    public int getSizeBytes() {
+        return sizeBytes;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
 }

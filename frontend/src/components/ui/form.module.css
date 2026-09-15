@@ -1,7 +1,17 @@
-.grid { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.full { grid-column: 1 / -1; }
+.grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.full {
+  grid-column: 1 / -1;
+}
 
 @media (max-width: 680px) {
-  .grid { grid-template-columns: 1fr; }
-  .full { grid-column: auto; }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .full {
+    grid-column: auto;
+  }
 }

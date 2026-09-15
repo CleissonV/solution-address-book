@@ -63,15 +63,29 @@ public class AddressEntity {
 
     protected AddressEntity() {}
 
-    public AddressEntity(UserEntity user, String zipCode, String number, String complement,
-                         String street, String neighborhood, String city, String state, boolean primary) {
+    public AddressEntity(
+            UserEntity user,
+            String zipCode,
+            String number,
+            String complement,
+            String street,
+            String neighborhood,
+            String city,
+            String state,
+            boolean primary) {
         this.user = user;
         update(zipCode, number, complement, street, neighborhood, city, state);
         this.primary = primary;
     }
 
-    public void update(String zipCode, String number, String complement, String street,
-                       String neighborhood, String city, String state) {
+    public void update(
+            String zipCode,
+            String number,
+            String complement,
+            String street,
+            String neighborhood,
+            String city,
+            String state) {
         this.zipCode = zipCode;
         this.number = number;
         this.complement = complement;
@@ -81,16 +95,51 @@ public class AddressEntity {
         this.state = state;
     }
 
-    public void setPrimary(boolean primary) { this.primary = primary; }
-    public UUID getId() { return id; }
-    public UserEntity getUser() { return user; }
-    public String getZipCode() { return zipCode; }
-    public String getNumber() { return number; }
-    public String getComplement() { return complement; }
-    public String getStreet() { return street; }
-    public String getNeighborhood() { return neighborhood; }
-    public String getCity() { return city; }
-    public String getState() { return state; }
-    public boolean isPrimary() { return primary; }
-    public Instant getCreatedAt() { return createdAt; }
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public String getComplement() {
+        return complement;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public String getNeighborhood() {
+        return neighborhood;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }

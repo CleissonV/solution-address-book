@@ -19,7 +19,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         try {
-            return userRepository.findById(UUID.fromString(id))
+            return userRepository
+                    .findById(UUID.fromString(id))
                     .filter(UserEntity::isActive)
                     .map(AuthenticatedUser::from)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));

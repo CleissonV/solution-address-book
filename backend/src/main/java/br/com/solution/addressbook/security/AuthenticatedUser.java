@@ -8,14 +8,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public record AuthenticatedUser(
-        UUID id,
-        String cpf,
-        String password,
-        String role
-) implements UserDetails {
+public record AuthenticatedUser(UUID id, String cpf, String password, String role)
+        implements UserDetails {
     public static AuthenticatedUser from(UserEntity user) {
-        return new AuthenticatedUser(user.getId(), user.getCpf(), user.getPasswordHash(), user.getRole().name());
+        return new AuthenticatedUser(
+                user.getId(), user.getCpf(), user.getPasswordHash(), user.getRole().name());
     }
 
     @Override
@@ -24,8 +21,12 @@ public record AuthenticatedUser(
     }
 
     @Override
-    public String getUsername() { return cpf; }
+    public String getUsername() {
+        return cpf;
+    }
 
     @Override
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 }

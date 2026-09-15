@@ -1,9 +1,9 @@
 package br.com.solution.addressbook.api;
 
-import br.com.solution.addressbook.application.dto.UserDtos.ProfilePhotoResponse;
-import java.time.Duration;
 import br.com.solution.addressbook.application.ProfilePhotoService;
+import br.com.solution.addressbook.application.dto.UserDtos.ProfilePhotoResponse;
 import br.com.solution.addressbook.security.AuthenticatedUser;
+import java.time.Duration;
 import java.util.UUID;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
@@ -28,15 +28,16 @@ public class ProfilePhotoController {
     }
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<ProfilePhotoResponse> upload(@PathVariable UUID userId,
-                                                @RequestPart("file") MultipartFile file,
-                                                @AuthenticationPrincipal AuthenticatedUser actor) {
+    ResponseEntity<ProfilePhotoResponse> upload(
+            @PathVariable UUID userId,
+            @RequestPart("file") MultipartFile file,
+            @AuthenticationPrincipal AuthenticatedUser actor) {
         return ResponseEntity.ok(profilePhotoService.upload(userId, file, actor));
     }
 
     @GetMapping
-    ResponseEntity<byte[]> get(@PathVariable UUID userId,
-                               @AuthenticationPrincipal AuthenticatedUser actor) {
+    ResponseEntity<byte[]> get(
+            @PathVariable UUID userId, @AuthenticationPrincipal AuthenticatedUser actor) {
         var photo = profilePhotoService.get(userId, actor);
         byte[] content = photo.content();
         return ResponseEntity.ok()
@@ -48,8 +49,8 @@ public class ProfilePhotoController {
     }
 
     @DeleteMapping
-    ResponseEntity<Void> delete(@PathVariable UUID userId,
-                                @AuthenticationPrincipal AuthenticatedUser actor) {
+    ResponseEntity<Void> delete(
+            @PathVariable UUID userId, @AuthenticationPrincipal AuthenticatedUser actor) {
         profilePhotoService.delete(userId, actor);
         return ResponseEntity.noContent().build();
     }

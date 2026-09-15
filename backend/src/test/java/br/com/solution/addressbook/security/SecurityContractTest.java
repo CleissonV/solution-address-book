@@ -14,8 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 class SecurityContractTest {
-    @Autowired
-    MockMvc mockMvc;
+    @Autowired MockMvc mockMvc;
 
     @Test
     void missingAuthenticationReturnsStandardUnauthorizedError() throws Exception {

@@ -17,19 +17,23 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(
+            UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
 
     public LoginResponse login(LoginRequest request) {
-        UserEntity user = userRepository.findByCpf(Cpf.normalize(request.cpf()))
-                .orElseThrow(AuthService::invalidCredentials);
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) throw invalidCredentials();
+        UserEntity user =
+                userRepository
+                        .findByCpf(Cpf.normalize(request.cpf()))
+                        .orElseThrow(AuthService::invalidCredentials);
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash()))
+            throw invalidCredentials();
         if (!user.isActive()) {
-            throw new DomainException("ACCOUNT_INACTIVE",
-                    "Conta desativada. Procure um administrador.");
+            throw new DomainException(
+                    "ACCOUNT_INACTIVE", "Conta desativada. Procure um administrador.");
         }
         AuthenticatedUser principal = AuthenticatedUser.from(user);
         return new LoginResponse(jwtService.issue(principal), UserMapper.toSummary(user));
